@@ -1,0 +1,19 @@
+/* ══════════════════════════════════════════════════
+   WASITI 2027 — Design Tokens
+   ══════════════════════════════════════════════════ */
+
+:root {
+  --accent-1: #22c55e;
+  --accent-2: #60a5fa;
+  --accent-3: #a78bfa;
+  --radius-card: 18px;
+  --radius-input: 14px;
+  --radius-btn: 14px;
+  --blur-glass: 18px;
+}
+
+[data-theme="light"] {
+  --accent-1: #4f46e5;
+  --accent-2: #06b6d4;
+  --accent-3: #9333ea;
+}

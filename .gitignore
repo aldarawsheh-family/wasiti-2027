@@ -1,0 +1,68 @@
+# ══════════════════════════════════════════════════
+# WASITI 2027 — .gitignore
+# ══════════════════════════════════════════════════
+
+# ── التبعيات ──
+node_modules/
+.pnp/
+.pnp.js
+
+# ── ملفات البناء ──
+dist/
+build/
+.next/
+out/
+.nuxt/
+
+# ── متغيرات البيئة ──
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ── Docker ──
+docker-compose.override.yml
+*.log
+
+# ── نظام التشغيل ──
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ── IDE ──
+.vscode/settings.json
+.idea/
+*.iml
+*.suo
+*.user
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+*.egg-info/
+
+# ── بيانات ──
+*.sqlite
+*.db
+pgdata/
+redisdata/
+miniodata/
+
+# ── ملفات كبيرة ──
+*.zip
+*.tar.gz
+*.rar
+uploads/
+temp/
+
+# ── أسرار ──
+*.pem
+*.key
+*.crt
+secrets/

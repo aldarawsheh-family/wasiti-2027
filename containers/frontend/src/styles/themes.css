@@ -1,0 +1,15 @@
+/* ══════════════════════════════════════════════════
+   WASITI 2027 — Themes
+   ══════════════════════════════════════════════════ */
+
+[data-theme="dark"] {
+  --bg-primary: #070b14;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+}
+
+[data-theme="light"] {
+  --bg-primary: #f8fafc;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+}

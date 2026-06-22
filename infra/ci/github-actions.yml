@@ -1,0 +1,28 @@
+# ══════════════════════════════════════════════════
+# WASITI 2027 — GitHub Actions CI/CD
+# ══════════════════════════════════════════════════
+
+name: Wasity CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker images
+        run: docker-compose build
+
+      - name: Run tests
+        run: echo "Tests will be added"
+
+      - name: Deploy
+        if: github.ref == 'refs/heads/main'
+        run: echo "Deploy to production"

@@ -1,0 +1,14 @@
+{
+  "common": {
+    "search": "Search",
+    "publish": "Post Ad",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "nav": {
+    "home": "Home",
+    "explore": "Explore",
+    "publish": "Post",
+    "chat": "Chat"
+  }
+}
