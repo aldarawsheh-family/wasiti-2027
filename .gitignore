@@ -66,3 +66,21 @@ temp/
 *.key
 *.crt
 secrets/
+# ÈíÆÉ
+.env
+*.env
+
+# äÓÎ ÇÍÊíÇØíÉ
+backups/
+
+# ÈíÇäÇÊ
+pgdata/
+redisdata/
+miniodata/
+
+# ÓÌáÇÊ
+logs/
+*.log
+
+# äÓÎ ÇÍÊíÇØíÉ áŞÇÚÏÉ ÇáÈíÇäÇÊ
+*.sql

@@ -10,7 +10,9 @@ export class CompanyService {
   private db: Pool;
 
   constructor() {
-    this.db = new Pool({ connectionString: process.env.DATABASE_URL });
+const dbUrl = new URL(process.env.DATABASE_URL || 'postgres://wasity:***@postgres:5432/wasity');
+dbUrl.searchParams.set('options', '-c search_path=company,public');
+this.db = new Pool({ connectionString: dbUrl.toString() });
   }
 
   async create(tenantId: string, data: { name: string; type: string; ownerId: string }) {

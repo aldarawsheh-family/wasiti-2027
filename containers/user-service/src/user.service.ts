@@ -10,7 +10,9 @@ export class UserService {
   private db: Pool;
 
   constructor() {
-    this.db = new Pool({ connectionString: process.env.DATABASE_URL });
+    const dbUrl = new URL(process.env.DATABASE_URL || 'postgres://wasity:***@postgres:5432/wasity');
+    dbUrl.searchParams.set('options', '-c search_path=auth,public');
+    this.db = new Pool({ connectionString: dbUrl.toString() });
   }
 
   async getUser(tenantId: string, userId: string) {
@@ -64,6 +66,10 @@ export class UserService {
       updates.push(`theme = $${paramIndex++}`);
       values.push(data.theme);
     }
+    if (data.role !== undefined) {
+      updates.push(`role = $${paramIndex++}`);
+      values.push(data.role);
+    }
 
     if (updates.length === 0) {
       return this.getUser(tenantId, userId);
@@ -84,8 +90,8 @@ export class UserService {
   async getTrustScore(tenantId: string, userId: string) {
     const result = await this.db.query(
       `SELECT trust_score, is_verified,
-              (SELECT COUNT(*) FROM reviews WHERE reviewed_id = $1) as total_reviews,
-              (SELECT COALESCE(AVG(rating), 0) FROM reviews WHERE reviewed_id = $1) as avg_rating
+              (SELECT COUNT(*) FROM listing.reviews WHERE reviewed_id = $1) as total_reviews,
+              (SELECT COALESCE(AVG(rating), 0) FROM listing.reviews WHERE reviewed_id = $1) as avg_rating
        FROM users
        WHERE tenant_id = $2 AND id = $1`,
       [userId, tenantId],

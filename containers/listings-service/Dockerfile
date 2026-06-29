@@ -1,16 +1,7 @@
-# ══════════════════════════════════════════════════
-# WASITI 2027 — Listings Service Dockerfile
-# ══════════════════════════════════════════════════
-
 FROM node:20-alpine
-
 WORKDIR /app
-
-COPY package.json package-lock.json* ./
-RUN npm ci --only=production
+COPY package*.json ./
+RUN npm install
 COPY . .
-RUN npm run build
-
 EXPOSE 3000
-
-CMD ["node", "dist/main.js"]
+CMD ["npx", "ts-node-dev", "--respawn", "src/main.ts"]

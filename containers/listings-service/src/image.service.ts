@@ -4,7 +4,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { MinioService } from './minio.service';
-import * as sharp from 'sharp';
+import sharp from 'sharp';
 
 @Injectable()
 export class ImageService {
@@ -15,7 +15,6 @@ export class ImageService {
   async upload(listingId: string, file: Buffer, index: number): Promise<string> {
     const compressed = await this.compress(file);
 
-    // رفع 3 نسخ
     const sizes = [
       { suffix: '', width: 1200 },
       { suffix: '_medium', width: 800 },
@@ -34,6 +33,14 @@ export class ImageService {
     }
 
     return `${String(index).padStart(3, '0')}.webp`;
+  }
+
+    async uploadSingle(file: any): Promise<string> {
+    const compressed = await this.compress(file.buffer);
+    const filename = `${Date.now()}.webp`;
+    const key = `listings/uploads/${filename}`;
+    await this.minio.upload(this.bucket, key, compressed, 'image/webp');
+    return `http://localhost:9000/${this.bucket}/${key}`;
   }
 
   async delete(listingId: string, filename: string): Promise<void> {

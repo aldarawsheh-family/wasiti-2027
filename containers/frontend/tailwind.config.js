@@ -1,36 +1,42 @@
-// ══════════════════════════════════════════════════
-// WASITI 2027 — Frontend — Tailwind Config
-// ══════════════════════════════════════════════════
+// ==========================================================
+// frontend/tailwind.config.js — النسخة المحدثة
+// ==========================================================
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
-  darkMode: 'class',
+  content: [
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     extend: {
+      // الألوان الأساسية والمتخصصة
       colors: {
-        wasity: {
-          indigo: '#4f46e5',
-          cyan: '#06b6d4',
-          purple: '#9333ea',
-          green: '#22c55e',
-          blue: '#60a5fa',
-          pink: '#ec4899',
+        primary:   '#22c55e',
+        secondary: '#60a5fa',
+        accent:    '#a78bfa',
+        success:   '#22c55e',
+        warning:   '#facc15',
+        error:     '#ef4444',
+
+        // الخلفيات المخصصة للثيم الداكن
+        bg: {
+          dark:  '#0a0f14',
+          card:  '#111a20',
+          input: '#1a252e',
+        },
+
+        // النصوص
+        text: {
+          main:  '#ffffff',
+          muted: '#9ca3af',
         },
       },
+
+      // الخطوط (استيراد خط Cairo من Google Fonts)
       fontFamily: {
-        sans: ['system-ui', 'sans-serif'],
-      },
-      animation: {
-        'float': 'float 12s ease-in-out infinite',
-      },
-      keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translate(0, 0)' },
-          '50%': { transform: 'translate(120px, 80px)' },
-        },
+        sans: ['Cairo', 'Tajawal', 'sans-serif'],
       },
     },
   },
   plugins: [],
-};
+}

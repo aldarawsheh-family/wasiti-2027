@@ -6,12 +6,15 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# ── تحديث pip ──
+RUN pip install --upgrade pip
+
 # ── تثبيت التبعيات ──
-COPY requirements.txt .
+COPY . . requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # ── نسخ الكود ──
-COPY src/ ./src/
+COPY . . src/ ./src/
 
 # ── المنفذ ──
 EXPOSE 8000

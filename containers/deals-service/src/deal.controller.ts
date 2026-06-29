@@ -2,14 +2,21 @@
 // WASITI 2027 — Deals Service — Controller
 // ══════════════════════════════════════════════════
 
-import { Controller, Get, Post, Put, Body, Param, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, Headers, UseGuards, SetMetadata } from '@nestjs/common';
 import { DealService } from './deal.service';
+import { AuthGuard } from './common/guards/auth.guard';
+import { TenantGuard } from './common/guards/tenant.guard';
+import { RolesGuard } from './common/guards/roles.guard';
+
+const Roles = (...roles: string[]) => SetMetadata('roles', roles);
 
 @Controller()
+@UseGuards(AuthGuard, TenantGuard, RolesGuard)
 export class DealController {
   constructor(private readonly dealService: DealService) {}
 
   @Post()
+  @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
   async create(
     @Headers('tenant-id') tenantId: string,
     @Body() body: { listingId: string; buyerId: string; sellerId: string; offerPrice?: number; message?: string },
@@ -18,6 +25,7 @@ export class DealController {
   }
 
   @Get(':id')
+  @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
   async get(
     @Headers('tenant-id') tenantId: string,
     @Param('id') id: string,
@@ -26,6 +34,7 @@ export class DealController {
   }
 
   @Get()
+  @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
   async list(
     @Headers('tenant-id') tenantId: string,
     @Headers('user-id') userId: string,
@@ -34,6 +43,7 @@ export class DealController {
   }
 
   @Put(':id/transition')
+  @Roles('SELLER', 'ADMIN', 'PLATFORM_OWNER')
   async transition(
     @Headers('tenant-id') tenantId: string,
     @Param('id') id: string,
@@ -43,6 +53,7 @@ export class DealController {
   }
 
   @Get(':id/history')
+  @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
   async history(
     @Headers('tenant-id') tenantId: string,
     @Param('id') id: string,

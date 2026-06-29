@@ -1,0 +1,126 @@
+# WASITI 2027 — Prometheus Configuration
+# المسار: infra/monitoring/prometheus.yml
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'wasiti-monitor'
+    environment: 'production'
+
+scrape_configs:
+  # --- Frontend (Next.js) ---
+  - job_name: 'frontend'
+    metrics_path: '/api/metrics'
+    static_configs:
+      - targets: ['frontend:3000']
+        labels:
+          service: 'frontend'
+          component: 'web'
+
+  # --- Backend Services (NestJS) ---
+  - job_name: 'auth-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['auth-service:3001']
+        labels:
+          service: 'auth'
+          component: 'backend'
+
+  - job_name: 'user-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['user-service:3002']
+        labels:
+          service: 'user'
+          component: 'backend'
+
+  - job_name: 'listings-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['listings-service:3003']
+        labels:
+          service: 'listings'
+          component: 'backend'
+
+  - job_name: 'chat-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['chat-service:3004']
+        labels:
+          service: 'chat'
+          component: 'backend'
+
+  - job_name: 'deals-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['deals-service:3005']
+        labels:
+          service: 'deals'
+          component: 'backend'
+
+  - job_name: 'notification-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['notification-service:3006']
+        labels:
+          service: 'notifications'
+          component: 'backend'
+
+  - job_name: 'api-gateway'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['api-gateway:80']
+        labels:
+          service: 'gateway'
+          component: 'infra'
+
+  # --- Database (PostgreSQL) ---
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          service: 'postgres'
+          component: 'database'
+
+  # --- Cache (Redis) ---
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          service: 'redis'
+          component: 'cache'
+
+  # --- Storage (MinIO) ---
+  - job_name: 'minio'
+    metrics_path: '/minio/v2/metrics/cluster'
+    static_configs:
+      - targets: ['minio:9000']
+        labels:
+          service: 'minio'
+          component: 'storage'
+
+  # --- AI Service (Python/FastAPI) ---
+  - job_name: 'ai-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['ai-service:8000']
+        labels:
+          service: 'ai'
+          component: 'ai'
+
+  # --- System Metrics (Node Exporter) ---
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service: 'system'
+          component: 'infra'
+
+  # --- Docker Metrics ---
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+        labels:
+          service: 'docker'
+          component: 'infra'

@@ -1,8 +1,4 @@
-// ══════════════════════════════════════════════════
-// WASITI 2027 — Auth Service — Service
-// ══════════════════════════════════════════════════
-
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+﻿import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from './jwt.service';
 import { RedisService } from './redis.service';
 import { Pool } from 'pg';
@@ -16,7 +12,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly redis: RedisService,
   ) {
-    this.db = new Pool({ connectionString: process.env.DATABASE_URL });
+    const dbUrl = new URL(process.env.DATABASE_URL || 'postgres://wasity:***@postgres:5432/wasity');
+    dbUrl.searchParams.set('options', '-c search_path=auth,public');
+    this.db = new Pool({ connectionString: dbUrl.toString() });
   }
 
   async register(tenantId: string, body: { email: string; password: string; displayName?: string }) {
@@ -32,9 +30,7 @@ export class AuthService {
     const passwordHash = await bcrypt.hash(body.password, 12);
 
     const result = await this.db.query(
-      `INSERT INTO users (tenant_id, email, password_hash, display_name)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id, email, display_name, role`,
+      'INSERT INTO users (tenant_id, email, password_hash, display_name) VALUES ($1, $2, $3, $4) RETURNING id, email, display_name, role',
       [tenantId, body.email, passwordHash, body.displayName || body.email],
     );
 
@@ -64,20 +60,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // تحديث آخر دخول
-    await this.db.query(
-      'UPDATE users SET last_login_at = NOW() WHERE id = $1',
-      [user.id],
-    );
+    await this.db.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [user.id]);
 
     const tokens = await this.jwtService.generateTokens(user.id, tenantId, user.role);
 
-    // تخزين الجلسة في Redis
-    await this.redis.set(
-      `session:${user.id}`,
-      JSON.stringify({ tenantId, role: user.role }),
-      86400, // 24 ساعة
-    );
+    await this.redis.set('session:' + user.id, JSON.stringify({ tenantId, role: user.role }), 86400);
 
     return {
       user: {
@@ -92,8 +79,19 @@ export class AuthService {
   }
 
   async refreshToken(refreshToken: string) {
+    const isRotated = await this.redis.get('blacklist:' + refreshToken);
+    if (isRotated) {
+      throw new UnauthorizedException('Refresh token already used');
+    }
+
     try {
       const payload = await this.jwtService.verifyRefresh(refreshToken);
+      
+      const ttl = payload.exp - Math.floor(Date.now() / 1000);
+      if (ttl > 0) {
+        await this.redis.set('blacklist:' + refreshToken, 'rotated', ttl);
+      }
+      
       const tokens = await this.jwtService.generateTokens(payload.userId, payload.tenantId, payload.role);
       return tokens;
     } catch {
@@ -102,12 +100,11 @@ export class AuthService {
   }
 
   async logout(accessToken: string) {
-    // إضافة الرمز للقائمة السوداء
     const payload = await this.jwtService.verifyAccess(accessToken).catch(() => null);
     if (payload) {
       const ttl = payload.exp - Math.floor(Date.now() / 1000);
       if (ttl > 0) {
-        await this.redis.set(`blacklist:${accessToken}`, '1', ttl);
+        await this.redis.set('blacklist:' + accessToken, '1', ttl);
       }
     }
   }

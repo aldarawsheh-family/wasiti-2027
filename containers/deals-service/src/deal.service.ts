@@ -15,7 +15,9 @@ export class DealService {
     private readonly stateMachine: StateMachine,
     private readonly audit: AuditService,
   ) {
-    this.db = new Pool({ connectionString: process.env.DATABASE_URL });
+    const dbUrl = new URL(process.env.DATABASE_URL || 'postgres://wasity:***@postgres:5432/wasity');
+    dbUrl.searchParams.set('options', '-c search_path=deal,public');
+    this.db = new Pool({ connectionString: dbUrl.toString() });
   }
 
   async create(tenantId: string, data: any) {
@@ -35,7 +37,7 @@ export class DealService {
     const result = await this.db.query(
       `SELECT d.*, l.title as listing_title
        FROM deals d
-       JOIN listings l ON d.listing_id = l.id
+       JOIN listing.listings l ON d.listing_id = l.id
        WHERE d.tenant_id = $1 AND d.id = $2`,
       [tenantId, id],
     );
@@ -48,7 +50,7 @@ export class DealService {
     const result = await this.db.query(
       `SELECT d.*, l.title as listing_title
        FROM deals d
-       JOIN listings l ON d.listing_id = l.id
+       JOIN listing.listings l ON d.listing_id = l.id
        WHERE d.tenant_id = $1 AND (d.buyer_id = $2 OR d.seller_id = $2)
        ORDER BY d.updated_at DESC`,
       [tenantId, userId],
@@ -86,7 +88,7 @@ export class DealService {
     const result = await this.db.query(
       `SELECT dt.*, u.display_name as changed_by_name
        FROM deal_transitions dt
-       JOIN users u ON dt.changed_by = u.id
+       JOIN public.users u ON dt.changed_by = u.id
        WHERE dt.deal_id = $1
        ORDER BY dt.created_at ASC`,
       [dealId],

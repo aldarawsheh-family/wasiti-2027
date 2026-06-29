@@ -2,9 +2,16 @@
 // WASITI 2027 — User Service — Profile Controller
 // ══════════════════════════════════════════════════
 
-import { Controller, Post, Get, Param, Headers, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, Get, Param, Headers, UseGuards, SetMetadata } from '@nestjs/common';
+import { AuthGuard } from './common/guards/auth.guard';
+import { TenantGuard } from './common/guards/tenant.guard';
+import { RolesGuard } from './common/guards/roles.guard';
+
+const Roles = (...roles: string[]) => SetMetadata('roles', roles);
 
 @Controller('profile')
+@UseGuards(AuthGuard, TenantGuard, RolesGuard)
+@Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
 export class ProfileController {
 
   @Get(':id')

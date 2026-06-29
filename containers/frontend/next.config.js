@@ -1,18 +1,23 @@
-// ══════════════════════════════════════════════════
-// WASITI 2027 — Frontend — Next.js Config
-// ══════════════════════════════════════════════════
+const createNextIntlPlugin = require('next-intl/plugin');
+
+const withNextIntl = createNextIntlPlugin(
+  './src/i18n.ts'
+);
+
+const isDocker = process.env.DOCKER === 'true';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  i18n: {
-    locales: ['ar', 'en'],
-    defaultLocale: 'ar',
-    localeDetection: true,
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: isDocker
+          ? 'http://api-gateway:8080/api/:path*'
+          : 'http://localhost:8080/api/:path*',
+      },
+    ];
   },
-  images: {
-    domains: ['localhost', 'picsum.photos'],
-  },
-  reactStrictMode: true,
 };
 
-module.exports = nextConfig;
+module.exports = withNextIntl(nextConfig);

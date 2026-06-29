@@ -1,16 +1,7 @@
-# ══════════════════════════════════════════════════
-# WASITI 2027 — Frontend Dockerfile
-# ══════════════════════════════════════════════════
-
 FROM node:20-alpine
-
 WORKDIR /app
-
-COPY package.json package-lock.json* ./
-RUN npm ci
+COPY package*.json ./
+RUN npm install
 COPY . .
-RUN npm run build
-
 EXPOSE 3000
-
-CMD ["npm", "start"]
+CMD ["npx", "next", "dev", "-p", "3000"]

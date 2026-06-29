@@ -1,64 +1,30 @@
-// ══════════════════════════════════════════════════
-// WASITI 2027 — Listings Service — Controller
-// ══════════════════════════════════════════════════
-
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, Headers } from '@nestjs/common';
+﻿import { Controller, Post, Put, Body, Param, UseGuards, Req, Logger } from '@nestjs/common';
 import { ListingService } from './listing.service';
-import { SearchService } from './search.service';
+import { AuthGuard } from './common/guards/auth.guard';
+import { TenantGuard } from './common/guards/tenant.guard';
+import { RolesGuard, Roles } from './common/guards/roles.guard';
 
-@Controller()
+@Controller('listings')
 export class ListingController {
-  constructor(
-    private readonly listingService: ListingService,
-    private readonly searchService: SearchService,
-  ) {}
+  private readonly logger = new Logger('ListingController');
+
+  constructor(private readonly listingService: ListingService) {}
 
   @Post()
-  async create(
-    @Headers('tenant-id') tenantId: string,
-    @Body() body: any,
-  ) {
-    return this.listingService.create(tenantId, body);
-  }
-
-  @Get('search')
-  async search(
-    @Headers('tenant-id') tenantId: string,
-    @Query('q') q: string,
-    @Query('category') category: string,
-    @Query('city') city: string,
-    @Query('minPrice') minPrice: string,
-    @Query('maxPrice') maxPrice: string,
-    @Query('limit') limit: string,
-    @Query('offset') offset: string,
-  ) {
-    return this.searchService.search(tenantId, {
-      q, category, city, minPrice, maxPrice, limit, offset,
-    });
-  }
-
-  @Get(':id')
-  async get(
-    @Headers('tenant-id') tenantId: string,
-    @Param('id') id: string,
-  ) {
-    return this.listingService.getById(tenantId, id);
+  @UseGuards(AuthGuard, TenantGuard, RolesGuard)
+  @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
+  async create(@Body() body: any, @Req() req: any) {
+    const ownerId = req.userId || req.headers['user-id'];
+    const tenantId = req.tenantId;
+    this.logger.log('Create listing - userId:', req.userId);
+    return this.listingService.create(tenantId, { ...body, ownerId });
   }
 
   @Put(':id')
-  async update(
-    @Headers('tenant-id') tenantId: string,
-    @Param('id') id: string,
-    @Body() body: any,
-  ) {
+  @UseGuards(AuthGuard, TenantGuard, RolesGuard)
+  @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
+  async update(@Param('id') id: string, @Body() body: any, @Req() req: any) {
+    const tenantId = req.tenantId;
     return this.listingService.update(tenantId, id, body);
-  }
-
-  @Delete(':id')
-  async delete(
-    @Headers('tenant-id') tenantId: string,
-    @Param('id') id: string,
-  ) {
-    return this.listingService.delete(tenantId, id);
   }
 }

@@ -1,29 +1,25 @@
-// ══════════════════════════════════════════════════
-// WASITI 2027 — Frontend — Root Layout
-// ══════════════════════════════════════════════════
+// WASITI 2027 — Root Layout (النسخة النهائية باستخدام @/)
+// المسار: app/[locale]/layout.tsx
 
-import type { Metadata } from 'next';
-import '../styles/globals.css';
+import '@/styles/globals.css'; // ✅ استخدام @ للإشارة إلى مجلد src
 
-export const metadata: Metadata = {
-  title: 'وسيطي 2027 — Wasity',
-  description: 'السوق الذكي الجديد',
-};
+interface RootLayoutProps {
+  children: React.ReactNode;
+  params: {
+    locale: string;
+  };
+}
 
 export default function RootLayout({
   children,
-  params: { locale },
-}: {
-  children: React.ReactNode;
-  params: { locale: string };
-}) {
+  params,
+}: RootLayoutProps) {
+  const locale = params.locale || 'ar';
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={dir} suppressHydrationWarning>
-      <body className="min-h-screen" data-theme="dark">
-        {children}
-      </body>
+    <html lang={locale} dir={dir}>
+      <body>{children}</body>
     </html>
   );
 }

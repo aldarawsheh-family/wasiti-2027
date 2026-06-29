@@ -3,12 +3,54 @@
     "search": "بحث",
     "publish": "نشر إعلان",
     "login": "دخول",
-    "logout": "خروج"
+    "logout": "خروج",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل"
   },
   "nav": {
     "home": "الرئيسية",
     "explore": "استكشف",
     "publish": "نشر",
     "chat": "محادثات"
-  }
+  },
+  "sidebar": {
+    "dashboard": "لوحة التحكم",
+    "listings": "الإعلانات",
+    "chat": "المحادثات",
+    "deals": "الصفقات",
+    "companies": "الشركات",
+    "bookings": "الحجوزات",
+    "transport": "النقل",
+    "analytics": "التحليلات",
+    "settings": "الإعدادات"
+  },
+  "theme": {
+    "light": "نهاري",
+    "dark": "داكن",
+    "system": "النظام"
+  },
+  "language": {
+    "ar": "العربية",
+    "en": "English"
+  },
+  "hero": {
+    "title1": "واسطي",
+    "title2": "السوق الذكي",
+    "title3": "الجديد",
+    "subtitle": "بيع وشراء أسرع — ثقة أعلى — تجربة 2027",
+    "searchPlaceholder": "ابحث عن سيارة، عقار، خدمة..."
+  },
+  "stats": {
+    "users": "مستخدم",
+    "listings": "إعلانات"
+  },
+  "categories": {
+    "cars": "سيارات",
+    "realEstate": "عقارات",
+    "mobiles": "موبايلات",
+    "services": "خدمات"
+  },
+  "hotDeals": "إعلانات ساخنة"
 }

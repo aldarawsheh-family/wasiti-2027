@@ -3,12 +3,54 @@
     "search": "Search",
     "publish": "Post Ad",
     "login": "Login",
-    "logout": "Logout"
+    "logout": "Logout",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit"
   },
   "nav": {
     "home": "Home",
     "explore": "Explore",
     "publish": "Post",
     "chat": "Chat"
-  }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "listings": "Listings",
+    "chat": "Chat",
+    "deals": "Deals",
+    "companies": "Companies",
+    "bookings": "Bookings",
+    "transport": "Transport",
+    "analytics": "Analytics",
+    "settings": "Settings"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "ar": "العربية",
+    "en": "English"
+  },
+  "hero": {
+    "title1": "Wasiti",
+    "title2": "The Smart",
+    "title3": "Market",
+    "subtitle": "Faster Buy & Sell — Higher Trust — Experience 2027",
+    "searchPlaceholder": "Search for cars, real estate, services..."
+  },
+  "stats": {
+    "users": "Users",
+    "listings": "Ads"
+  },
+  "categories": {
+    "cars": "Cars",
+    "realEstate": "Real Estate",
+    "mobiles": "Mobiles",
+    "services": "Services"
+  },
+  "hotDeals": "Hot Deals"
 }

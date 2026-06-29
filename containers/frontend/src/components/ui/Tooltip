@@ -1,0 +1,65 @@
+'use client';
+
+import React, { useState } from 'react';
+
+interface TooltipProps {
+  children: React.ReactNode;
+  content: string;
+  position?: 'top' | 'bottom';
+  className?: string;
+}
+
+export default function Tooltip({
+  children,
+  content,
+  position = 'top',
+  className = '',
+}: TooltipProps) {
+  const [show, setShow] = useState(false);
+
+  const positionClasses = {
+    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
+    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
+  };
+
+  const arrowClasses = {
+    top: 'top-full left-1/2 -translate-x-1/2 border-t-[#0F1F33]',
+    bottom: 'bottom-full left-1/2 -translate-x-1/2 border-b-[#0F1F33]',
+  };
+
+  return (
+    <div
+      className={`relative inline-block ${className}`}
+      onMouseEnter={() => setShow(true)}
+      onMouseLeave={() => setShow(false)}
+    >
+      {children}
+      
+      {show && (
+        <div
+          className={`
+            absolute ${positionClasses[position]}
+            px-3 py-2
+            rounded-xl
+            bg-[#0F1F33]/95 backdrop-blur-xl
+            text-white text-xs
+            whitespace-nowrap
+            shadow-xl
+            border border-white/20
+            pointer-events-none
+            z-50
+            animate-in fade-in zoom-in-95 duration-150
+          `}
+        >
+          {content}
+          <div
+            className={`
+              absolute ${arrowClasses[position]}
+              border-4 border-transparent
+            `}
+          />
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,11 +1,18 @@
-// ══════════════════════════════════════════════════
-// WASITI 2027 — Company Service — Controller
-// ══════════════════════════════════════════════════
+﻿// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
+// WASITI 2027 â€” Company Service â€” Controller
+// â•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گâ•گ
 
-import { Controller, Get, Post, Put, Delete, Body, Param, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Headers, UseGuards } from '@nestjs/common';
 import { CompanyService } from './company.service';
+import { AuthGuard } from './common/guards/auth.guard';
+import { TenantGuard } from './common/guards/tenant.guard';
+import { RolesGuard } from './common/guards/roles.guard';
+import { SetMetadata } from '@nestjs/common';
+const Roles = (...roles: string[]) => SetMetadata('roles', roles);
 
 @Controller()
+@UseGuards(AuthGuard, TenantGuard, RolesGuard)
+@Roles('SELLER', 'ADMIN', 'PLATFORM_OWNER')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
