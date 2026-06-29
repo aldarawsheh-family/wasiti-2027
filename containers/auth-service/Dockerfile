@@ -4,4 +4,5 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE 3005
-CMD ["npx", "ts-node-dev", "--respawn", "src/main.ts"]
+RUN npm run build
+CMD ["node", "dist/main.js"]
