@@ -3,6 +3,6 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+RUN npm install -g ts-node-dev
 EXPOSE 3005
-RUN npm run build
-CMD ["node", "dist/main.js"]
+CMD ["ts-node-dev", "--respawn", "src/main.ts"]
