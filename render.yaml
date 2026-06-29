@@ -1,0 +1,45 @@
+﻿services:
+  - type: web
+    name: wasity-gateway
+    env: docker
+    dockerfilePath: ./containers/api-gateway/Dockerfile
+    envVars:
+      - key: API_GATEWAY_PORT
+        value: 8080
+
+  - type: web
+    name: wasity-auth
+    env: docker
+    dockerfilePath: ./containers/auth-service/Dockerfile
+    envVars:
+      - key: PORT
+        value: 3005
+      - key: DATABASE_URL
+        fromDatabase:
+          name: wasity-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: wasity-redis
+          type: redis
+          property: connectionString
+
+  - type: web
+    name: wasity-listings
+    env: docker
+    dockerfilePath: ./containers/listings-service/Dockerfile
+    envVars:
+      - key: PORT
+        value: 3004
+
+  - type: web
+    name: wasity-frontend
+    env: docker
+    dockerfilePath: ./containers/frontend/Dockerfile
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://wasity-gateway.onrender.com
+
+databases:
+  - name: wasity-db
+    plan: free
