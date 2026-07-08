@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth.store';
 import { LayoutDashboard, Package, Handshake, Users, Wallet, Settings, User, TrendingUp, Building2, Headphones, Shield, BarChart3, DollarSign, CreditCard, Activity } from 'lucide-react';
+import DynamicSidebar from '@/components/tenant/DynamicSidebar';
 
 interface SidebarItem {
   label: string;
@@ -46,13 +47,42 @@ const adminItems: SidebarItem[] = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { user } = useAuthStore();
+  const { user, accessToken } = useAuthStore();
+  const [manifestSections, setManifestSections] = useState<string[] | null>(null);
 
   const adminRoles = ['PLATFORM_OWNER', 'ADMIN'];
   const supportRoles = ['SUPPORT', 'MODERATOR'];
   const isAdmin = user && adminRoles.includes(user.role);
   const isSupport = user && supportRoles.includes(user.role);
+  const isCompanyAdmin = user?.role === 'COMPANY_ADMIN';
 
+  // جلب manifest للـ COMPANY_ADMIN
+  useEffect(() => {
+    if (!isCompanyAdmin || !accessToken) return;
+    
+    fetch('/api/companies/my-company', {
+      headers: { 'Authorization': 'Bearer ' + accessToken, 'tenant-id': '00000000-0000-0000-0000-000000000001', 'user-id': user?.id || '' }
+    })
+    .then(r => r.json())
+    .then(company => {
+      if (!company?.tenant_type) return;
+      return fetch(`/api/companies/manifest/${company.tenant_type}`, {
+        headers: { 'Authorization': 'Bearer ' + accessToken, 'tenant-id': '00000000-0000-0000-0000-000000000001' }
+      });
+    })
+    .then(r => r?.json())
+    .then(manifest => {
+      if (manifest?.sidebar) setManifestSections(manifest.sidebar);
+    })
+    .catch(() => {});
+  }, [isCompanyAdmin, accessToken]);
+
+  // COMPANY_ADMIN مع manifest = DynamicSidebar
+  if (isCompanyAdmin && manifestSections && manifestSections.length > 0) {
+    return <DynamicSidebar sections={manifestSections} basePath="/ar/dashboard/company" />;
+  }
+
+  // باقي الأدوار = Sidebar عادي
   const items = isAdmin ? adminItems 
     : isSupport ? supportItems 
     : allItems.filter(item => item.roles.includes(user?.role || ''));

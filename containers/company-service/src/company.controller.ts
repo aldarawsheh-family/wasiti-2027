@@ -5,6 +5,7 @@ import { TenantGuard } from './common/guards/tenant.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { TenantScopeGuard } from './common/guards/tenant-scope.guard';
 import { SetMetadata } from '@nestjs/common';
+import { Auditable } from './common/interceptors/audit-log.interceptor';
 import { Pool } from 'pg';
 
 const Roles = (...roles: string[]) => SetMetadata('roles', roles);
@@ -37,7 +38,15 @@ export class CompanyController {
     );
     return result.rows[0] || null;
   }
-
+  @Get('manifest/:typeKey')
+  async getManifest(@Param('typeKey') typeKey: string) {
+    const result = await this.db.query(
+      'SELECT dashboard_manifest FROM company.tenant_type_registry WHERE type_key = $1',
+      [typeKey],
+    );
+    if (result.rows.length === 0) return { sidebar: ['listings', 'settings'] };
+    return result.rows[0].dashboard_manifest;
+  }
   @Get(':id')
   async get(
     @Headers('tenant-id') tenantId: string,
@@ -52,6 +61,7 @@ export class CompanyController {
   }
 
   @Put(':id')
+  @Auditable('company.update')
   async update(
     @Headers('tenant-id') tenantId: string,
     @Param('id') id: string,
@@ -61,6 +71,7 @@ export class CompanyController {
   }
 
   @Delete(':id')
+  @Auditable('company.delete')
   async delete(
     @Headers('tenant-id') tenantId: string,
     @Param('id') id: string,

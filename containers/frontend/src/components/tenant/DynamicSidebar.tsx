@@ -26,7 +26,24 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   'team': <Users size={18} />,
   'settings': <Settings size={18} />,
 };
-
+const PATH_MAP: Record<string, string> = {
+  'company-info': '/ar/dashboard/company',
+  'vehicles': '/ar/dashboard/company/transport',
+  'trips': '/ar/dashboard/company/transport',
+  'bookings': '/ar/dashboard/company/booking',
+  'property-info': '/ar/dashboard/company/booking',
+  'rooms': '/ar/dashboard/company/booking',
+  'reservations': '/ar/dashboard/company/booking',
+  'reviews': '/ar/dashboard/company/booking',
+  'products': '/ar/dashboard/company/shop',
+  'orders': '/ar/dashboard/company/shop',
+  'listings': '/ar/dashboard/company',
+  'clients': '/ar/dashboard/company/members',
+  'deals': '/ar/dashboard/company',
+  'team': '/ar/dashboard/company/members',
+  'settings': '/ar/dashboard/company/settings',
+  'calendar': '/ar/dashboard/company/booking',
+};
 const LABEL_MAP: Record<string, string> = {
   'listings': 'إعلاناتي',
   'clients': 'عملائي',
@@ -58,7 +75,7 @@ export default function DynamicSidebar({ sections, basePath = '/ar/dashboard/com
     <aside className="fixed right-0 top-14 h-[calc(100vh-3.5rem)] w-60 bg-white border-l border-gray-200 shadow-sm overflow-y-auto z-40">
       <div className="flex flex-col gap-1 p-3">
         {sections.map((section) => {
-          const href = `${basePath}/${section}`;
+          const href = PATH_MAP[section] || `${basePath}/${section}`;
           const isActive = pathname === href || pathname?.startsWith(href + '/');
           return (
             <Link

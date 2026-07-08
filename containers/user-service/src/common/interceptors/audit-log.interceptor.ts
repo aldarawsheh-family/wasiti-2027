@@ -8,6 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { Pool } from 'pg';
+import { Reflector } from '@nestjs/core';
 
 export const AUDIT_KEY = 'audit_action';
 export const Auditable = (action: string) => SetMetadata(AUDIT_KEY, action);
@@ -15,24 +16,32 @@ export const Auditable = (action: string) => SetMetadata(AUDIT_KEY, action);
 @Injectable()
 export class AuditLogInterceptor implements NestInterceptor {
   private db: Pool;
+  private reflector: Reflector;
 
   constructor() {
     this.db = new Pool({
       connectionString: process.env.DATABASE_URL || 'postgres://wasity:wasity@postgres:5432/wasity',
     });
+    this.reflector = new Reflector();
   }
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
-    const handler = context.getHandler();
-    const classRef = context.getClass();
-    const actionType = Reflect.getMetadata(AUDIT_KEY, classRef.prototype, handler.name);
+
+    const actionType = this.reflector.getAllAndOverride<string>(AUDIT_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    console.log('HANDLER:', context.getHandler().name);
+    console.log('CLASS:', context.getClass().name);
+    console.log('METADATA:', actionType);
 
     if (!actionType) {
       return next.handle();
     }
 
-    const actorId = request.userId || request.headers['user-id'] || '00000000-0000-0000-0000-000000000000';
+    const actorId = request.userId || request.headers['user-id'] || 'system';
     const targetId = request.params?.id || null;
     const ipAddress = request.ip || 'api';
 

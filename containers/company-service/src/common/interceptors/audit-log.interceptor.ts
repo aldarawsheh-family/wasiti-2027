@@ -52,7 +52,7 @@ export class AuditLogInterceptor implements NestInterceptor {
             `INSERT INTO audit_logs (user_id, action, entity_type, entity_id, new_data, ip_address, tenant_id)
              VALUES ($1, $2, $3, $4, $5, $6, $7)`,
             [actorId, actionType, 'unknown', targetId, JSON.stringify(data), ipAddress,
-             request.tenantId || '00000000-0000-0000-0000-000000000001'],
+             request.tenantId || request.headers['tenant-id'] || '00000000-0000-0000-0000-000000000001'],
           );
         } catch (err) {
           console.error('Audit log failed:', err);

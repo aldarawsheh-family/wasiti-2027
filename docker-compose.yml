@@ -24,6 +24,7 @@ services:
       - chat-service
       - deals-service
       - notification-service
+      - ai-service
     networks:
       - wasity-net
     restart: unless-stopped
@@ -192,6 +193,12 @@ services:
       context: ./containers/ai-service
       dockerfile: Dockerfile
     container_name: wasity-ai
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}

@@ -70,12 +70,6 @@ export class UserService {
   }
 
   async updateUser(tenantId: string, userId: string, data: any, actorId?: string) {
-    const oldUser = await this.db.query(
-      `SELECT role FROM users WHERE tenant_id = $1 AND id = $2`,
-      [tenantId, userId],
-    );
-    const oldRole = oldUser.rows[0]?.role || null;
-
     const updates: string[] = [];
     const values: any[] = [];
     let paramIndex = 1;
@@ -114,31 +108,10 @@ export class UserService {
       values,
     );
 
-    // Audit log — تغيير الدور
-    if (data.role !== undefined && oldRole !== data.role) {
-      try {
-        await this.db.query(
-          `INSERT INTO audit_logs (user_id, action, entity_type, entity_id, old_data, new_data, ip_address, tenant_id)
-           VALUES ($1, 'user.role.update', 'user', $2, $3, $4, 'api', $5)`,
-          [actorId || 'system', userId,
-           JSON.stringify({ role: oldRole }),
-           JSON.stringify({ role: data.role }),
-           tenantId],
-        );
-      } catch (err) {
-        console.error('Audit log failed:', err);
-      }
-    }
-
     return this.getUser(tenantId, userId);
   }
 
   async deleteUser(tenantId: string, userId: string, actorId?: string) {
-    const oldUser = await this.db.query(
-      `SELECT email, role FROM users WHERE tenant_id = $1 AND id = $2`,
-      [tenantId, userId],
-    );
-
     const result = await this.db.query(
       `UPDATE users SET is_banned = true, updated_at = NOW()
        WHERE tenant_id = $1 AND id = $2
@@ -148,20 +121,6 @@ export class UserService {
 
     if (result.rows.length === 0) {
       throw new NotFoundException('User not found');
-    }
-
-    // Audit log — حذف مستخدم
-    try {
-      await this.db.query(
-        `INSERT INTO audit_logs (user_id, action, entity_type, entity_id, old_data, new_data, ip_address, tenant_id)
-         VALUES ($1, 'user.delete', 'user', $2, $3, $4, 'api', $5)`,
-        [actorId || 'system', userId,
-         JSON.stringify({ email: oldUser.rows[0]?.email, role: oldUser.rows[0]?.role }),
-         JSON.stringify({ deleted: true }),
-         tenantId],
-      );
-    } catch (err) {
-      console.error('Audit log failed:', err);
     }
 
     return { message: 'User deleted', user: result.rows[0] };
