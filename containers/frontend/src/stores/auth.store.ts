@@ -1,4 +1,4 @@
-﻿// WASITI 2027 â€” Auth Store (Zustand + Persist)
+﻿// WASITI 2027 — Auth Store (Zustand + Persist)
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { login as loginApi, register as registerApi, logout as logoutApi, refreshToken } from '@/features/auth/api/auth';
@@ -8,12 +8,13 @@ interface User {
   email: string;
   displayName: string;
   role: string;
+  permissions: string[];
+  tenantType: string | null;
 }
 
 interface AuthState {
   user: User | null;
   accessToken: string | null;
-  // refreshToken via httpOnly cookie
   loading: boolean;
 
   login: (email: string, password: string) => Promise<void>;
@@ -21,26 +22,28 @@ interface AuthState {
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
   setUser: (user: User) => void;
+  hasPermission: (permission: string) => boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       accessToken: null,
-      refreshToken: null,
       loading: false,
 
       login: async (email, password) => {
         set({ loading: true });
         try {
           const data = await loginApi(email, password);
-          // ط®ط²ظ‘ظ† ظپظٹ cookie ظ„ظ„ظ…iddleware
           document.cookie = `auth_token=${data.accessToken}; path=/; max-age=604800; SameSite=Lax`;
           set({
-            user: data.user,
+            user: {
+              ...data.user,
+              permissions: data.user.permissions || [],
+              tenantType: data.user.tenantType || null,
+            },
             accessToken: data.accessToken,
-            // refreshToken via httpOnly cookie
             loading: false,
           });
         } catch (error) {
@@ -63,28 +66,31 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         await logoutApi();
         document.cookie = 'auth_token=; path=/; max-age=0';
-        set({ user: null, accessToken: null, refreshToken: null });
+        set({ user: null, accessToken: null });
       },
 
       refresh: async () => {
         const data = await refreshToken();
         if (data) {
           document.cookie = `auth_token=${data.token}; path=/; max-age=604800; SameSite=Lax`;
-          set({
-            accessToken: data.token,
-            // refreshToken via httpOnly cookie
-          });
+          set({ accessToken: data.token });
         }
       },
 
       setUser: (user) => set({ user }),
+
+      hasPermission: (permission: string) => {
+        const user = get().user;
+        if (!user) return false;
+        if (user.role === 'PLATFORM_OWNER') return true;
+        return user.permissions?.includes(permission) || false;
+      },
     }),
     {
       name: 'auth-storage',
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,
-        // refreshToken via httpOnly cookie
       }),
     }
   )

@@ -5,6 +5,10 @@ import { HealthController } from './health.controller';
 import { AuthService } from './auth.service';
 import { JwtService } from './jwt.service';
 import { RedisService } from './redis.service';
+import { RbacService } from './rbac.service';
+import { PermissionsGuard } from './common/guards/permissions.guard';
+import { AuditLogInterceptor } from './common/interceptors/audit-log.interceptor';
+import { HealthAggregatorService } from './common/services/health-aggregator.service';
 
 @Module({
   imports: [
@@ -14,6 +18,6 @@ import { RedisService } from './redis.service';
     }),
   ],
   controllers: [AuthController, HealthController],
-  providers: [AuthService, JwtService, RedisService],
+  providers: [AuthService, JwtService, RedisService, RbacService, PermissionsGuard, AuditLogInterceptor, HealthAggregatorService],
 })
 export class AppModule {}

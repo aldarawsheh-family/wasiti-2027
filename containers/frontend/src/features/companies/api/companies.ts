@@ -1,9 +1,9 @@
-// WASITI 2027 — دوال الشركات (Companies API)
-// المسار: src/lib/api/companies.ts
+// WASITI 2027 â€” ط¯ظˆط§ظ„ ط§ظ„ط´ط±ظƒط§طھ (Companies API)
+// ط§ظ„ظ…ط³ط§ط±: src/lib/api/companies.ts
 
-import { api } from './client';
+import { api } from '@/lib/api/client';
 
-// --- جلب بيانات الشركة ---
+// --- ط¬ظ„ط¨ ط¨ظٹط§ظ†ط§طھ ط§ظ„ط´ط±ظƒط© ---
 export const getCompany = async (id?: string) => {
   try {
     const url = id ? `/companies/${id}` : '/companies';
@@ -26,13 +26,13 @@ export const getCompany = async (id?: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب بيانات الشركة');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ ط¨ظٹط§ظ†ط§طھ ط§ظ„ط´ط±ظƒط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- تحديث معلومات الشركة ---
+// --- طھط­ط¯ظٹط« ظ…ط¹ظ„ظˆظ…ط§طھ ط§ظ„ط´ط±ظƒط© ---
 export const updateCompany = async (data: {
   name?: string;
   description?: string;
@@ -56,13 +56,13 @@ export const updateCompany = async (data: {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل تحديث الشركة');
+    throw new Error('ظپط´ظ„ طھط­ط¯ظٹط« ط§ظ„ط´ط±ظƒط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- جلب قائمة أعضاء الشركة ---
+// --- ط¬ظ„ط¨ ظ‚ط§ط¦ظ…ط© ط£ط¹ط¶ط§ط، ط§ظ„ط´ط±ظƒط© ---
 export const getMembers = async () => {
   try {
     const response = await api.get<{
@@ -80,13 +80,13 @@ export const getMembers = async () => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب الأعضاء');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ ط§ظ„ط£ط¹ط¶ط§ط،');
   } catch (error) {
     throw error;
   }
 };
 
-// --- دعوة عضو جديد ---
+// --- ط¯ط¹ظˆط© ط¹ط¶ظˆ ط¬ط¯ظٹط¯ ---
 export const inviteMember = async (data: {
   email: string;
   role: string;
@@ -100,13 +100,13 @@ export const inviteMember = async (data: {
     if (response.data.success) {
       return response.data;
     }
-    throw new Error('فشل إرسال الدعوة');
+    throw new Error('ظپط´ظ„ ط¥ط±ط³ط§ظ„ ط§ظ„ط¯ط¹ظˆط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- حذف عضو من الشركة ---
+// --- ط­ط°ظپ ط¹ط¶ظˆ ظ…ظ† ط§ظ„ط´ط±ظƒط© ---
 export const removeMember = async (id: string) => {
   try {
     const response = await api.delete<{
@@ -117,13 +117,13 @@ export const removeMember = async (id: string) => {
     if (response.data.success) {
       return response.data;
     }
-    throw new Error('فشل حذف العضو');
+    throw new Error('ظپط´ظ„ ط­ط°ظپ ط§ظ„ط¹ط¶ظˆ');
   } catch (error) {
     throw error;
   }
 };
 
-// --- تحديث دور عضو ---
+// --- طھط­ط¯ظٹط« ط¯ظˆط± ط¹ط¶ظˆ ---
 export const updateMemberRole = async (id: string, role: string) => {
   try {
     const response = await api.put<{
@@ -134,7 +134,7 @@ export const updateMemberRole = async (id: string, role: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل تحديث دور العضو');
+    throw new Error('ظپط´ظ„ طھط­ط¯ظٹط« ط¯ظˆط± ط§ظ„ط¹ط¶ظˆ');
   } catch (error) {
     throw error;
   }

@@ -1,43 +1,44 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Car, Building2, Smartphone, Wrench, Armchair, ShoppingBag } from 'lucide-react';
+import React from 'react';
+import { Shield, Zap, Headphones } from 'lucide-react';
 
-const categories = [
-  { label: 'سيارات', icon: Car, color: '#00ff88' },
-  { label: 'عقارات', icon: Building2, color: '#a855f7' },
-  { label: 'موبايلات', icon: Smartphone, color: '#3b82f6' },
-  { label: 'وظائف', icon: ShoppingBag, color: '#facc15' },
-  { label: 'أثاث', icon: Armchair, color: '#ef4444' },
-  { label: 'خدمات', icon: Wrench, color: '#22d3ee' },
+const features = [
+  {
+    icon: Shield,
+    title: 'موثوق ومعتمد',
+    description: 'جميع التجار والشركات موثقة ومعتمدة من قبل فريق وسيط لضمان مصداقية الإعلانات والصفقات.',
+  },
+  {
+    icon: Zap,
+    title: 'سرعة وأمان',
+    description: 'نظام دفع آمن ومعاملات سريعة مع حماية كاملة لبياناتك الشخصية والمالية.',
+  },
+  {
+    icon: Headphones,
+    title: 'دعم على مدار الساعة',
+    description: 'فريق دعم فني جاهز لمساعدتك في أي وقت عبر المحادثة المباشرة أو الهاتف.',
+  },
 ];
 
 export default function WhyUs() {
-  const router = useRouter();
-  const [selectedCategory, setSelectedCategory] = useState('');
-
-  const handleCategoryClick = (label: string) => {
-    setSelectedCategory(label);
-    router.push(`/ar/search?category=${encodeURIComponent(label)}`);
-  };
-
   return (
-    <section className="grid grid-cols-3 gap-4 mb-8 text-center">
-      {categories.map((item, index) => (
-        <button
-          key={index}
-          onClick={() => handleCategoryClick(item.label)}
-          className="w-[62px] h-[62px] mx-auto rounded-full bg-[var(--bg-input)] border border-[var(--border-light)] flex flex-col items-center justify-center gap-[2px] cursor-pointer group transition-all duration-300 hover:border-[var(--color-primary)] hover:shadow-[0_0_20px_rgba(0,255,136,0.15)]"
-        >
-          <div style={{ color: item.color }} className="group-hover:scale-110 transition-transform">
-            <item.icon size={22} />
+    <section className="py-16 px-4 max-w-6xl mx-auto">
+      <h2 className="text-3xl font-bold text-center text-[#111827] mb-12 drop-shadow-sm">
+        لماذا تختار وسيط؟
+      </h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+        {features.map((feature, index) => (
+          <div key={index} className="flex flex-col items-center text-center p-8 bg-white/30 backdrop-blur-xl rounded-[20px] shadow-sm border border-white/40 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+            <div className="w-16 h-16 rounded-full bg-[#22C55E]/20 backdrop-blur-sm flex items-center justify-center mb-6 border border-[#22C55E]/30">
+              <feature.icon size={32} className="text-[#22C55E]" />
+            </div>
+            <h3 className="text-xl font-bold text-[#111827] mb-3">{feature.title}</h3>
+            <p className="text-[#6B7280] text-sm leading-relaxed">{feature.description}</p>
           </div>
-          <span className="text-[10px] text-[var(--text-secondary)] group-hover:text-white transition-colors font-medium leading-none">
-            {item.label}
-          </span>
-        </button>
-      ))}
+        ))}
+      </div>
     </section>
   );
 }

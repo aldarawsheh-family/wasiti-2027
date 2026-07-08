@@ -5,11 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getListings } from '@/features/listings/api/listings';
 import { ArrowRight, Search, MapPin, Tag, Package } from 'lucide-react';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import Card from '@/components/ui/Card';
-import Badge from '@/components/ui/Badge';
-import Skeleton from '@/components/ui/Skeleton';
 
 const categories = [
   { name: 'سيارات', icon: '🚗' },
@@ -39,99 +34,81 @@ export default function SearchPage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) {
-      router.push(`/ar/search?q=${encodeURIComponent(query)}`);
-    }
+    if (query.trim()) router.push(`/ar/search?q=${encodeURIComponent(query)}`);
   };
 
   return (
-    <div className="min-h-screen bg-[#1D3E66] text-white pb-28 relative overflow-x-hidden">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1D3E66] via-[#2A5783] to-[#12263A]"></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(103,232,249,0.35),transparent_70%)]"></div>
+    <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <button onClick={() => router.push('/ar')} className="flex items-center gap-2 text-gray-500 hover:text-[#128C4F] transition font-medium text-sm">
+          <ArrowRight size={18} className="rotate-180" /> رجوع
+        </button>
+        <h1 className="text-xl font-bold text-gray-900">البحث عن إعلانات</h1>
       </div>
 
-      <div className="relative z-10 p-6 max-w-6xl mx-auto space-y-6">
-
-        {/* شريط علوي */}
-        <div className="sticky top-4 z-30 pt-2 pb-4">
-          <div className="bg-white/25 backdrop-blur-xl border border-white/25 rounded-2xl px-4 py-3 flex justify-between items-center shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-            <Button variant="glass" size="sm" onClick={() => router.push('/ar')}>
-              <ArrowRight size={18} className="rotate-180" /> رجوع
-            </Button>
-            <span className="font-bold text-sm text-white">البحث عن إعلانات</span>
-          </div>
-        </div>
-
-        {/* شريط البحث */}
-        <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
-          <Input
+      {/* Search Bar */}
+      <form onSubmit={handleSearch} className="flex gap-3">
+        <div className="flex-1 relative">
+          <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
             placeholder="ابحث عن سيارة، عقار، خدمة..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            icon={<Search size={18} />}
-            className="flex-1"
+            onChange={e => setQuery(e.target.value)}
+            className="w-full border-2 border-gray-200 rounded-2xl pr-11 pl-4 py-3.5 text-gray-900 outline-none focus:border-[#128C4F]"
           />
-          <Button type="submit" size="lg">
-            <Search size={18} /> بحث
-          </Button>
-        </form>
+        </div>
+        <button type="submit" className="bg-[#128C4F] text-white px-6 py-3.5 rounded-2xl font-bold flex items-center gap-2 hover:bg-emerald-700 transition shadow-lg">
+          <Search size={18} /> بحث
+        </button>
+      </form>
 
-        {/* الفئات */}
-        <div className="flex flex-wrap gap-2">
-          {categories.map((cat) => (
-            <Badge key={cat.name} variant="glass">
-              {cat.icon} {cat.name}
-            </Badge>
+      {/* Categories */}
+      <div className="flex flex-wrap gap-2">
+        {categories.map(cat => (
+          <span key={cat.name} className="px-4 py-2 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-[#128C4F]/10 hover:text-[#128C4F] transition cursor-pointer">
+            {cat.icon} {cat.name}
+          </span>
+        ))}
+      </div>
+
+      {/* Results */}
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1,2,3,4].map(i => (
+            <div key={i} className="bg-white rounded-2xl border-2 border-gray-200 overflow-hidden animate-pulse">
+              <div className="h-48 bg-gray-100" />
+              <div className="p-4 space-y-2">
+                <div className="h-5 bg-gray-100 rounded w-3/4" />
+                <div className="h-4 bg-gray-100 rounded w-1/2" />
+              </div>
+            </div>
           ))}
         </div>
-
-        {/* النتائج */}
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => (
-              <Card key={i} className="p-4">
-                <Skeleton height="200px" className="rounded-xl mb-4" />
-                <Skeleton height="24px" width="75%" className="mb-2" />
-                <Skeleton height="16px" width="50%" />
-              </Card>
-            ))}
-          </div>
-        ) : results.length === 0 ? (
-          <div className="text-center py-20">
-            <Package size={64} className="text-blue-200/20 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white">لا توجد نتائج</h2>
-            <p className="text-blue-200/50">حاول تعديل معايير البحث</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {results.map((item) => (
-              <Link key={item.id} href={`/ar/listing/${item.id}`}>
-                <Card hover className="overflow-hidden p-0">
-                  <div className="h-48 bg-black/30 flex items-center justify-center">
-                    {item.image ? (
-                      <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-4xl">📷</span>
-                    )}
-                  </div>
-                  <div className="p-4 space-y-2">
-                    <h3 className="text-white font-bold truncate">{item.title}</h3>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sky-300 font-bold flex items-center gap-1">
-                        <Tag size={14} /> {Number(item.price).toLocaleString()} ل.س
-                      </span>
-                      <span className="text-blue-200/50 text-sm flex items-center gap-1">
-                        <MapPin size={14} /> {item.city}
-                      </span>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+      ) : results.length === 0 ? (
+        <div className="text-center py-20">
+          <Package size={64} className="text-gray-200 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900">لا توجد نتائج</h2>
+          <p className="text-gray-400">حاول تعديل معايير البحث</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {results.map(item => (
+            <Link key={item.id} href={`/ar/listing/${item.id}`} className="bg-white rounded-2xl border-2 border-gray-200 overflow-hidden hover:shadow-lg hover:border-[#128C4F]/30 transition group">
+              <div className="h-48 bg-gray-50 flex items-center justify-center">
+                {item.image ? <img src={item.image} alt={item.title} className="w-full h-full object-cover" /> : <span className="text-4xl">📷</span>}
+              </div>
+              <div className="p-4 space-y-2">
+                <h3 className="text-gray-900 font-bold truncate">{item.title}</h3>
+                <div className="flex items-center justify-between">
+                  <span className="text-[#128C4F] font-bold flex items-center gap-1"><Tag size={14} /> {Number(item.price).toLocaleString()} ل.س</span>
+                  <span className="text-gray-400 text-sm flex items-center gap-1"><MapPin size={14} /> {item.city}</span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

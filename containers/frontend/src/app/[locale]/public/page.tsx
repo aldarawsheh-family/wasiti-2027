@@ -1,43 +1,71 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
+import Navbar from '@/features/public/components/Navbar';
+import Hero from '@/features/public/components/Hero';
+import Stats from '@/features/public/components/Stats';
 import FeaturedListings from '@/features/listings/components/FeaturedListings';
+import { Home, LayoutDashboard, PlusSquare, MessageCircle, User } from 'lucide-react';
 
-export default function LandingPage() {
+const bottomNav = [
+  { id: 'home', label: 'الرئيسية', icon: Home, href: '/ar/public/home' },
+  { id: 'dashboard', label: 'لوحة التحكم', icon: LayoutDashboard, href: '/ar/dashboard' },
+  { id: 'add', label: 'نشر', icon: PlusSquare, href: '/ar/publish' },
+  { id: 'chat', label: 'رسائل', icon: MessageCircle, href: '/ar/chat' },
+  { id: 'profile', label: 'حسابي', icon: User, href: '/ar/dashboard/profile' },
+];
+
+export default function PublicHomePage() {
+  const [activeTab, setActiveTab] = useState('الرئيسية');
+
   return (
-    <div className="min-h-screen bg-[var(--bg-dark)] text-white font-sans pb-28 relative overflow-x-hidden">
+    <main dir="rtl" className="min-h-screen text-[#111827] font-sans relative pb-28">
+      
+      {/* خلفية الصفحة الرئيسية */}
+      <div 
+        className="fixed inset-0 w-full h-full bg-cover bg-center bg-no-repeat z-0"
+        style={{ backgroundImage: 'url(/images/home-bg.jpg)' }}
+      />
+      
+      {/* طبقة تظليل */}
+      <div className="fixed inset-0 bg-white/30 z-[1]" />
 
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
-        
-        <div className="text-center mb-12 mt-20">
-          <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-[var(--color-primary)] to-white bg-clip-text text-transparent">
-            WASITI
-          </h1>
-          <p className="text-xl md:text-2xl text-[var(--text-secondary)]">
-            سوقك السوري الأول - بيع واشتري بسهولة
-          </p>
-        </div>
-
-        <div className="w-full max-w-7xl mb-16">
-          <FeaturedListings />
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-          <Link
-            href="/auth/login"
-            className="flex-1 bg-gradient-to-r from-[var(--color-primary)] to-[#11998e] text-black text-center py-4 px-8 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 shadow-[var(--shadow-neon)]"
-          >
-            تسجيل الدخول
-          </Link>
-          <Link
-            href="/auth/register"
-            className="flex-1 bg-[var(--bg-card)] hover:bg-white/10 border border-[var(--border-color)] text-white text-center py-4 px-8 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105"
-          >
-            تسجيل جديد
-          </Link>
-        </div>
-
+      {/* المحتوى */}
+      <div className="relative z-10">
+        <Navbar />
+        <Hero />
+        <div className="py-6" />
+        <Stats />
+        <div className="py-6" />
+        <FeaturedListings />
       </div>
-    </div>
+
+      {/* شريط سفلي زجاجي - نفس ستايل Dashboard */}
+      <div className="fixed bottom-6 left-4 right-4 flex justify-center z-30" style={{ maxWidth: '430px', margin: '0 auto' }}>
+        <div className="w-full bg-white/60 backdrop-blur-xl border border-white/40 rounded-[30px] px-5 py-3 flex justify-between items-center shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
+          {bottomNav.map((item) => {
+            const isActive = activeTab === item.label;
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                onClick={() => setActiveTab(item.label)}
+                className={`flex flex-col items-center gap-1 min-w-[50px] relative transition-all ${
+                  isActive ? 'text-[#22C55E]' : 'text-gray-400'
+                }`}
+              >
+                {isActive && (
+                  <div className="absolute -top-3 w-2 h-2 bg-[#22C55E] rounded-full shadow-[0_0_10px_rgba(34,197,94,0.8)]" />
+                )}
+                <item.icon size={isActive ? 22 : 20} />
+                <span className="text-[10px] font-medium text-black/70">{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+    </main>
   );
 }

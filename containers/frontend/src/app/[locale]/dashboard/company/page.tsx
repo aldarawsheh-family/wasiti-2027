@@ -1,95 +1,109 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Card from '@/components/ui/Card';
-import Table from '@/components/ui/Table';
-import Badge from '@/components/ui/Badge';
-import Skeleton from '@/components/ui/Skeleton';
 import { Building2, Package, Users, Handshake, Star } from 'lucide-react';
 
 export default function CompanyDashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000);
+    const timer = setTimeout(() => setLoading(false), 600);
     return () => clearTimeout(timer);
   }, []);
 
   const stats = [
-    { label: 'الإعلانات', value: '42', icon: Package, color: 'text-[var(--color-primary)]' },
-    { label: 'الأعضاء', value: '12', icon: Users, color: 'text-[var(--color-accent)]' },
-    { label: 'الصفقات', value: '28', icon: Handshake, color: 'text-[var(--color-success)]' },
-    { label: 'التقييم', value: '4.8 ★', icon: Star, color: 'text-[var(--color-warning)]' },
+    { label: 'الإعلانات', value: '42', icon: Package, color: 'from-emerald-500 to-[#128C4F]' },
+    { label: 'الأعضاء', value: '12', icon: Users, color: 'from-violet-500 to-purple-600' },
+    { label: 'الصفقات', value: '28', icon: Handshake, color: 'from-amber-500 to-orange-600' },
+    { label: 'التقييم', value: '4.8 ⭐', icon: Star, color: 'from-sky-500 to-blue-600' },
   ];
 
   const recentListings = [
-    { id: '1', title: 'سيارة تويوتا كورولا 2020', date: '2026-01-15', status: 'نشط' },
-    { id: '2', title: 'شقة للبيع في المزة', date: '2026-01-10', status: 'نشط' },
-    { id: '3', title: 'هاتف آيفون 15 برو', date: '2026-01-05', status: 'معلق' },
-    { id: '4', title: 'خدمة تصميم مواقع', date: '2025-12-28', status: 'محذوف' },
+    { title: 'سيارة تويوتا كورولا 2020', date: '2026-01-15', status: 'نشط' },
+    { title: 'شقة للبيع في المزة', date: '2026-01-10', status: 'نشط' },
+    { title: 'هاتف آيفون 15 برو', date: '2026-01-05', status: 'معلق' },
   ];
 
   const recentMembers = [
-    { name: 'أحمد المحمد', email: 'ahmed@example.com', joined: '2026-01-15', role: 'مدير' },
-    { name: 'سارة عبدالله', email: 'sara@example.com', joined: '2026-01-10', role: 'مسوق' },
-    { name: 'محمد علي', email: 'mohamed@example.com', joined: '2026-01-05', role: 'مندوب' },
+    { name: 'أحمد المحمد', email: 'ahmed@example.com', role: 'مدير' },
+    { name: 'سارة عبدالله', email: 'sara@example.com', role: 'مسوق' },
+    { name: 'محمد علي', email: 'mohamed@example.com', role: 'مندوب' },
   ];
 
-  const listingColumns = [
-    { key: 'title', label: 'العنوان' },
-    { key: 'date', label: 'التاريخ' },
-    { key: 'status', label: 'الحالة' },
-  ];
-
-  const listingData = recentListings.map((item) => ({
-    title: <span className="font-medium text-white">{item.title}</span>,
-    date: <span className="text-[var(--text-secondary)]">{item.date}</span>,
-    status: <Badge variant={item.status === 'نشط' ? 'success' : item.status === 'معلق' ? 'warning' : 'error'}>{item.status}</Badge>,
-  }));
-
-  const memberColumns = [
-    { key: 'name', label: 'الاسم' },
-    { key: 'email', label: 'البريد الإلكتروني' },
-    { key: 'joined', label: 'تاريخ الانضمام' },
-    { key: 'role', label: 'الدور' },
-  ];
-
-  const memberData = recentMembers.map((item) => ({
-    name: <span className="font-medium text-white">{item.name}</span>,
-    email: <span className="text-[var(--text-secondary)]">{item.email}</span>,
-    joined: <span className="text-[var(--text-secondary)]">{item.joined}</span>,
-    role: <Badge variant="secondary">{item.role}</Badge>,
-  }));
+  if (loading) {
+    return (
+      <div className="p-8 max-w-6xl mx-auto">
+        <div className="animate-pulse space-y-6">
+          <div className="h-8 bg-gray-200 rounded-2xl w-64"></div>
+          <div className="grid grid-cols-4 gap-4">{[1,2,3,4].map(i => <div key={i} className="h-24 bg-gray-100 rounded-2xl"></div>)}</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-dark)] text-white font-sans relative">
-      <div className="p-6 max-w-6xl mx-auto space-y-6">
-        <div className="flex items-center gap-3 pt-2">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[#11998e] flex items-center justify-center shadow-[var(--shadow-neon)]">
-            <Building2 size={20} className="text-black" />
-          </div>
-          <h1 className="text-3xl font-bold text-white">لوحة تحكم الشركة</h1>
+    <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#128C4F] to-emerald-600 flex items-center justify-center shadow-xl shadow-[#128C4F]/30">
+          <Building2 size={28} className="text-white" />
         </div>
+        <div>
+          <h1 className="text-3xl font-extrabold text-gray-900">لوحة تحكم الشركة</h1>
+          <p className="text-gray-500 mt-0.5">نظرة عامة على أداء الشركة</p>
+        </div>
+      </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {loading ? [1,2,3,4].map((i) => <Card key={i}><Skeleton height="80px" /></Card>) : stats.map((s, i) => (
-            <Card key={i} className="p-6 flex flex-col items-center justify-center gap-2 text-center" hover>
-              <s.icon size={28} className={s.color} />
-              <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
-              <div className="text-sm text-[var(--text-secondary)]">{s.label}</div>
-            </Card>
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {stats.map((s, i) => (
+          <div key={i} className="bg-white rounded-2xl border border-gray-200 p-5 text-center shadow-sm hover:shadow-md transition">
+            <div className={`w-10 h-10 mx-auto rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center mb-3 shadow-lg`}>
+              <s.icon size={20} className="text-white" />
+            </div>
+            <p className="text-2xl font-extrabold text-gray-900">{s.value}</p>
+            <p className="text-sm text-gray-500 mt-1">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Recent Listings */}
+      <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+        <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <Package size={18} className="text-[#128C4F]" /> آخر الإعلانات
+        </h2>
+        <div className="space-y-3">
+          {recentListings.map((item, i) => (
+            <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+              <span className="text-gray-900 font-semibold text-sm">{item.title}</span>
+              <div className="flex items-center gap-3">
+                <span className="text-gray-400 text-xs">{item.date}</span>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                  item.status === 'نشط' ? 'bg-emerald-50 text-emerald-700' :
+                  item.status === 'معلق' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-600'
+                }`}>{item.status}</span>
+              </div>
+            </div>
           ))}
         </div>
+      </div>
 
-        <Card className="p-4">
-          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Package size={18} className="text-[var(--color-primary)]" /> آخر الإعلانات</h2>
-          {loading ? <div className="space-y-3">{[1,2,3].map((i) => <Skeleton key={i} height="40px" />)}</div> : <Table columns={listingColumns} data={listingData} emptyMessage="لا توجد إعلانات" />}
-        </Card>
-
-        <Card className="p-4">
-          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Users size={18} className="text-[var(--color-primary)]" /> آخر الأعضاء</h2>
-          {loading ? <div className="space-y-3">{[1,2,3].map((i) => <Skeleton key={i} height="40px" />)}</div> : <Table columns={memberColumns} data={memberData} emptyMessage="لا يوجد أعضاء" />}
-        </Card>
+      {/* Recent Members */}
+      <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+        <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <Users size={18} className="text-[#128C4F]" /> آخر الأعضاء
+        </h2>
+        <div className="space-y-3">
+          {recentMembers.map((item, i) => (
+            <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+              <div>
+                <span className="text-gray-900 font-semibold text-sm">{item.name}</span>
+                <p className="text-gray-400 text-xs">{item.email}</p>
+              </div>
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">{item.role}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

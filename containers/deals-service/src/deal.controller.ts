@@ -35,10 +35,14 @@ export class DealController {
 
   @Get()
   @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
-  async list(
+  async listByUser(
     @Headers('tenant-id') tenantId: string,
     @Headers('user-id') userId: string,
+    @Headers('user-role') userRole: string,
   ) {
+    if (userRole === 'ADMIN' || userRole === 'PLATFORM_OWNER') {
+      return this.dealService.listAll(tenantId);
+    }
     return this.dealService.listByUser(tenantId, userId);
   }
 

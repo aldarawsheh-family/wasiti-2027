@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Skeleton from '@/components/ui/Skeleton';
 import { getListings } from '@/features/listings/api/listings';
 import Link from 'next/link';
-import { Heart, MapPin, ChevronRight } from 'lucide-react';
+import { Heart, MapPin, ChevronRight, BadgeCheck } from 'lucide-react';
 
 export default function FeaturedListings({ className = '' }: { className?: string }) {
   const [listings, setListings] = useState<any[]>([]);
@@ -15,29 +15,27 @@ export default function FeaturedListings({ className = '' }: { className?: strin
       .then((res) => {
         const data = res.data || res;
         const list = Array.isArray(data) ? data : data.data || [];
-        const items = list.slice(0, 4);
-        setListings(items);
+        setListings(list.slice(0, 4));
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
   return (
-    <div className={`px-4 space-y-4 pt-2 ${className}`}>
-      <div className="flex justify-between items-center px-1">
-        <h2 className="text-lg font-bold text-white flex items-center gap-2 drop-shadow-md">
-          <span className="w-1.5 h-5 bg-cyan-300 rounded-full shadow-[0_0_10px_rgba(103,232,249,0.5)]"></span>
-          مميز
-        </h2>
-        <Link href="/ar/search" className="text-xs text-cyan-300/80 flex items-center gap-1 hover:text-cyan-200 transition-colors">
-          عرض الكل <ChevronRight size={14} />
+    <section className={`py-16 px-4 max-w-7xl mx-auto ${className}`}>
+      
+      {/* العنوان + عرض الكل */}
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-2xl font-bold text-[#1A202C]">إعلانات مميزة</h2>
+        <Link href="/ar/search" className="text-[#128C4F] text-sm font-medium flex items-center gap-1 hover:underline">
+          عرض الكل <ChevronRight size={16} />
         </Link>
       </div>
 
       {loading && (
-        <div className="flex gap-4 pb-2 px-1">
+        <div className="flex overflow-x-auto gap-6 pb-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="min-w-[300px] max-w-[320px] h-[320px] rounded-2xl overflow-hidden flex-shrink-0">
+            <div key={i} className="min-w-[280px] h-[320px] rounded-2xl overflow-hidden flex-shrink-0">
               <Skeleton height="100%" className="rounded-2xl" />
             </div>
           ))}
@@ -45,53 +43,48 @@ export default function FeaturedListings({ className = '' }: { className?: strin
       )}
 
       {!loading && listings.length === 0 && (
-        <p className="text-blue-200/50 text-center py-8">لا توجد إعلانات مميزة بعد</p>
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+  <span className="text-5xl mb-4">📢</span>
+  <p className="text-[#A0AEC0] text-lg">لا توجد إعلانات مميزة بعد</p>
+  <p className="text-[#A0AEC0] text-sm mt-1">تصفح الإعلانات المتاحة أو أضف إعلانك الأول</p>
+</div>
       )}
 
       {!loading && listings.length > 0 && (
-        <div className="flex overflow-x-auto gap-4 pb-2 snap-x snap-mandatory scrollbar-hide px-1 -mx-1">
+        <div className="flex overflow-x-auto gap-6 pb-4 snap-x snap-mandatory scrollbar-hide">
           {listings.map((item) => (
             <Link
               key={item.id}
               href={`/ar/listing/${item.id}`}
-              className="relative min-w-[300px] max-w-[320px] h-[320px] rounded-2xl overflow-hidden bg-white/20 group snap-center hover:shadow-[0_0_30px_rgba(56,189,248,0.2)] transition-all duration-500 border border-white/25 flex-shrink-0 backdrop-blur-sm"
+              className="relative min-w-[280px] md:min-w-[300px] h-[340px] rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100 group snap-center hover:shadow-lg transition-all duration-300 flex-shrink-0"
             >
               {/* الصورة */}
-              <div
-                className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700"
-                style={{
-                  backgroundImage: item.image
-                    ? `url(${item.image})`
-                    : undefined,
-                }}
-              >
-                {!item.image && (
-                  <div className="w-full h-full bg-[#1a252e] flex items-center justify-center">
+              <div className="h-48 bg-gray-200 relative overflow-hidden">
+                {item.image ? (
+                  <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                ) : (
+                  <div className="w-full h-full bg-gray-100 flex items-center justify-center">
                     <span className="text-4xl">📷</span>
                   </div>
                 )}
+                
+                {/* شارة مميز */}
+                <span className="absolute top-3 left-3 bg-[#E8F5E9] text-[#128C4F] text-xs font-medium rounded-full px-3 py-1 flex items-center gap-1">
+                  <BadgeCheck size={14} /> مميز
+                </span>
+
+                {/* أيقونة المفضلة */}
+                <button className="absolute top-3 right-3 bg-white/80 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors">
+                  <Heart size={18} className="text-gray-400 hover:text-red-500 transition-colors" />
+                </button>
               </div>
 
-              {/* التدرج */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1D3E66] via-[#1D3E66]/70 to-transparent" />
-
-              {/* زر المفضلة */}
-              <button className="absolute top-3 right-3 bg-[#1D3E66]/50 backdrop-blur-md p-2 rounded-full border border-white/25 hover:bg-cyan-500/20 hover:border-cyan-300/50 transition-all">
-                <Heart size={18} className="text-blue-200/70 group-hover:text-cyan-200 transition-colors" />
-              </button>
-
               {/* معلومات الإعلان */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 flex flex-col gap-1">
-                <div className="flex justify-between items-end">
-                  <h3 className="text-white font-bold text-[15px] truncate max-w-[65%] tracking-wide drop-shadow-md">
-                    {item.title}
-                  </h3>
-                  <div className="bg-[#1D3E66]/60 backdrop-blur-md px-3 py-1 rounded-full border border-cyan-400/30 text-cyan-300 text-xs font-bold shadow-lg">
-                    {Number(item.price).toLocaleString()} ل.س
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-blue-200/60 mt-1">
-                  <MapPin size={14} className="text-blue-200/60" />
+              <div className="p-4 flex flex-col gap-2">
+                <h3 className="text-[#1A202C] font-semibold text-lg truncate">{item.title}</h3>
+                <div className="text-[#128C4F] font-bold text-xl">{Number(item.price).toLocaleString()} ل.س</div>
+                <div className="flex items-center gap-1 text-sm text-[#718096]">
+                  <MapPin size={14} />
                   <span>{item.city}</span>
                 </div>
               </div>
@@ -99,6 +92,6 @@ export default function FeaturedListings({ className = '' }: { className?: strin
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }

@@ -2,12 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Card from '@/components/ui/Card';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
-import Avatar from '@/components/ui/Avatar';
 import { ArrowRight, Building2, Save, Upload, Search, Users } from 'lucide-react';
-import Switch from '@/components/ui/Switch';
 
 export default function CompanySettingsPage() {
   const router = useRouter();
@@ -21,106 +16,78 @@ export default function CompanySettingsPage() {
     logo: '',
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
-  };
-
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (event) => setFormData((prev) => ({ ...prev, logo: event.target?.result as string }));
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.name) newErrors.name = 'اسم الشركة مطلوب';
-    if (!formData.description) newErrors.description = 'الوصف مطلوب';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
     setSaving(true);
-    try { console.log('حفظ:', formData); router.push('/ar/dashboard/company'); }
-    catch (error) { console.error('خطأ:', error); }
-    finally { setSaving(false); }
+    setTimeout(() => { setSaving(false); router.push('/ar/dashboard/company'); }, 500);
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-dark)] text-white font-sans relative">
-      <div className="p-6 max-w-4xl mx-auto space-y-6">
-        <div className="flex justify-between items-center pt-2">
-          <Button variant="glass" size="sm" onClick={() => router.push('/ar/dashboard/company')}>
-            <ArrowRight size={18} className="rotate-180" /> رجوع
-          </Button>
-          <span className="font-bold text-white">إعدادات الشركة</span>
-        </div>
+    <div className="max-w-3xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <button onClick={() => router.push('/ar/dashboard/company')} className="flex items-center gap-2 text-gray-500 hover:text-[#128C4F] transition font-medium text-sm">
+          <ArrowRight size={18} className="rotate-180" /> رجوع
+        </button>
+        <h1 className="text-xl font-bold text-gray-900">إعدادات الشركة</h1>
+      </div>
 
-        <Card className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <Building2 size={18} className="text-[var(--color-primary)]" /> معلومات الشركة
-              </h2>
-              <div className="space-y-4">
-                <Input label="اسم الشركة" name="name" value={formData.name} onChange={handleChange} error={errors.name} placeholder="أدخل اسم الشركة" />
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-[var(--text-secondary)]">الوصف</label>
-                  <textarea name="description" value={formData.description} onChange={handleChange} rows={4} className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-xl px-4 py-3 text-white outline-none focus:border-[var(--color-primary)] resize-none" placeholder="أدخل وصفاً للشركة" />
-                  {errors.description && <span className="text-sm text-red-300">{errors.description}</span>}
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-[var(--text-secondary)] block mb-3">شعار الشركة</label>
-                  <div className="flex items-center gap-4">
-                    <Avatar src={formData.logo} name={formData.name} size="lg" className="w-20 h-20 text-2xl" />
-                    <label className="cursor-pointer">
-                      <div className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-[var(--border-color)] rounded-xl px-4 py-2.5 transition-colors">
-                        <Upload size={16} className="text-[var(--color-primary)]" />
-                        <span className="text-sm text-[var(--text-secondary)]">رفع شعار</span>
-                      </div>
-                      <input type="file" accept="image/*" onChange={handleLogoChange} className="hidden" />
-                    </label>
+      <div className="bg-white rounded-3xl border-2 border-gray-200 p-8 shadow-md">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Building2 size={18} className="text-[#128C4F]" /> معلومات الشركة
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">اسم الشركة</label>
+                <input name="name" value={formData.name} onChange={handleChange} className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-[#128C4F]" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">الوصف</label>
+                <textarea name="description" value={formData.description} onChange={handleChange} rows={4} className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-[#128C4F] resize-none" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-500 mb-2">شعار الشركة</label>
+                <div className="flex items-center gap-4">
+                  <div className="w-20 h-20 rounded-2xl bg-[#128C4F]/10 flex items-center justify-center text-3xl font-extrabold text-[#128C4F]">
+                    {formData.name[0]}
                   </div>
+                  <label className="cursor-pointer flex items-center gap-2 border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-500 text-sm hover:border-[#128C4F] transition">
+                    <Upload size={16} /> رفع شعار
+                    <input type="file" accept="image/*" className="hidden" />
+                  </label>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="pt-4 border-t border-[var(--border-color)]">
-              <h2 className="text-lg font-bold text-white mb-4">الإعدادات العامة</h2>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between py-2">
-                  <div className="flex items-center gap-2">
-                    <Search size={16} className="text-[var(--text-secondary)]" />
-                    <span className="text-[var(--text-secondary)]">إظهار الشركة في البحث</span>
-                  </div>
-                  <Switch checked={showInSearch} onChange={setShowInSearch} />
-                </div>
-                <div className="flex items-center justify-between py-2">
-                  <div className="flex items-center gap-2">
-                    <Users size={16} className="text-[var(--text-secondary)]" />
-                    <span className="text-[var(--text-secondary)]">استقبال طلبات خارجية</span>
-                  </div>
-                  <Switch checked={acceptExternal} onChange={setAcceptExternal} />
-                </div>
+          <div className="pt-4 border-t border-gray-100">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">الإعدادات العامة</h2>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between py-2">
+                <div className="flex items-center gap-2 text-gray-600"><Search size={16} /> إظهار الشركة في البحث</div>
+                <button onClick={() => setShowInSearch(!showInSearch)} className={`w-12 h-7 rounded-full transition ${showInSearch ? 'bg-[#128C4F]' : 'bg-gray-300'}`}>
+                  <span className={`block w-6 h-6 rounded-full bg-white shadow transition ${showInSearch ? 'mr-6' : 'mr-0'}`} />
+                </button>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <div className="flex items-center gap-2 text-gray-600"><Users size={16} /> استقبال طلبات خارجية</div>
+                <button onClick={() => setAcceptExternal(!acceptExternal)} className={`w-12 h-7 rounded-full transition ${acceptExternal ? 'bg-[#128C4F]' : 'bg-gray-300'}`}>
+                  <span className={`block w-6 h-6 rounded-full bg-white shadow transition ${acceptExternal ? 'mr-6' : 'mr-0'}`} />
+                </button>
               </div>
             </div>
+          </div>
 
-            <div className="pt-4 border-t border-[var(--border-color)]">
-              <Button type="submit" variant="primary" size="lg" className="w-full" disabled={saving}>
-                <Save size={18} /> {saving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
-              </Button>
-            </div>
-          </form>
-        </Card>
+          <button type="submit" disabled={saving} className="w-full bg-[#128C4F] text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-emerald-700 transition shadow-lg">
+            <Save size={18} /> {saving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+          </button>
+        </form>
       </div>
     </div>
   );

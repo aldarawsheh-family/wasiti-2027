@@ -2,10 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Card from '@/components/ui/Card';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
-import { ArrowRight, PlusSquare, Save, Upload, FileText, Tag, MapPin, List, ImageIcon } from 'lucide-react';
+import { ArrowRight, PlusSquare, Upload, FileText, Tag, MapPin, List } from 'lucide-react';
 
 const categories = ['سيارات', 'عقارات', 'موبايلات', 'خدمات', 'أثاث', 'وظائف'];
 const cities = ['دمشق', 'حلب', 'حمص', 'حماة', 'اللاذقية', 'طرطوس'];
@@ -13,166 +10,90 @@ const cities = ['دمشق', 'حلب', 'حمص', 'حماة', 'اللاذقية', 
 export default function CreateListingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-
-  const [formData, setFormData] = useState({
-    title: '',
-    category: '',
-    price: '',
-    city: '',
-    description: '',
-    images: [] as File[],
-  });
-
+  const [formData, setFormData] = useState({ title: '', category: '', price: '', city: '', description: '', images: [] as File[] });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFormData((prev) => ({ ...prev, images: Array.from(e.target.files || []) }));
-    }
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    if (errors[e.target.name]) setErrors(prev => ({ ...prev, [e.target.name]: '' }));
   };
 
   const validate = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.title) newErrors.title = 'العنوان مطلوب';
-    if (!formData.category) newErrors.category = 'الفئة مطلوبة';
-    if (!formData.price) newErrors.price = 'السعر مطلوب';
-    if (!formData.city) newErrors.city = 'المدينة مطلوبة';
-    if (!formData.description) newErrors.description = 'الوصف مطلوب';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const errs: Record<string, string> = {};
+    if (!formData.title) errs.title = 'مطلوب';
+    if (!formData.category) errs.category = 'مطلوب';
+    if (!formData.price) errs.price = 'مطلوب';
+    if (!formData.city) errs.city = 'مطلوب';
+    if (!formData.description) errs.description = 'مطلوب';
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    try {
-      console.log('نشر الإعلان:', formData);
-      router.push('/ar/dashboard/listings');
-    } catch (error) {
-      console.error('خطأ:', error);
-    } finally {
-      setLoading(false);
-    }
+    setTimeout(() => { setLoading(false); router.push('/ar/dashboard'); }, 500);
   };
 
   return (
-    <div className="min-h-screen bg-[#1D3E66] text-white pb-28 relative overflow-x-hidden">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1D3E66] via-[#2A5783] to-[#12263A]"></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(103,232,249,0.35),transparent_70%)]"></div>
+    <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-500 hover:text-[#128C4F] transition font-medium text-sm">
+          <ArrowRight size={18} className="rotate-180" /> رجوع
+        </button>
+        <h1 className="text-xl font-bold text-gray-900">نشر إعلان جديد</h1>
       </div>
 
-      <div className="relative z-10 p-6 max-w-4xl mx-auto space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-3xl border-2 border-gray-200 p-8 shadow-md space-y-4">
+        <div>
+          <label className="flex items-center gap-2 text-sm text-gray-500 mb-1"><FileText size={14} className="text-[#128C4F]" /> العنوان</label>
+          <input name="title" value={formData.title} onChange={handleChange} placeholder="عنوان الإعلان" className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-[#128C4F]" />
+          {errors.title && <span className="text-red-500 text-xs">{errors.title}</span>}
+        </div>
 
-        {/* شريط علوي */}
-        <div className="sticky top-4 z-30 pt-2 pb-4">
-          <div className="bg-white/25 backdrop-blur-xl border border-white/25 rounded-2xl px-4 py-3 flex justify-between items-center shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-            <Button variant="glass" size="sm" onClick={() => router.back()}>
-              <ArrowRight size={18} className="rotate-180" /> رجوع
-            </Button>
-            <span className="font-bold text-sm text-white">إضافة إعلان جديد</span>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="flex items-center gap-2 text-sm text-gray-500 mb-1"><Tag size={14} className="text-[#128C4F]" /> السعر</label>
+            <input name="price" type="number" value={formData.price} onChange={handleChange} placeholder="ل.س" className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-[#128C4F]" />
+            {errors.price && <span className="text-red-500 text-xs">{errors.price}</span>}
+          </div>
+          <div>
+            <label className="flex items-center gap-2 text-sm text-gray-500 mb-1"><MapPin size={14} className="text-[#128C4F]" /> المدينة</label>
+            <input name="city" value={formData.city} onChange={handleChange} list="cities" placeholder="المدينة" className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-[#128C4F]" />
+            <datalist id="cities">{cities.map(c => <option key={c} value={c} />)}</datalist>
+            {errors.city && <span className="text-red-500 text-xs">{errors.city}</span>}
           </div>
         </div>
 
-        <Card className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <Input
-              label="العنوان"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              error={errors.title}
-              placeholder="أدخل عنوان الإعلان"
-              icon={<FileText size={16} />}
-            />
+        <div>
+          <label className="flex items-center gap-2 text-sm text-gray-500 mb-1"><List size={14} className="text-[#128C4F]" /> الفئة</label>
+          <select name="category" value={formData.category} onChange={handleChange} className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-[#128C4F] bg-white">
+            <option value="">اختر الفئة</option>
+            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          {errors.category && <span className="text-red-500 text-xs">{errors.category}</span>}
+        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="السعر (ل.س)"
-                name="price"
-                type="number"
-                value={formData.price}
-                onChange={handleChange}
-                error={errors.price}
-                placeholder="أدخل السعر"
-                icon={<Tag size={16} />}
-              />
-              <Input
-                label="المدينة"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                error={errors.city}
-                placeholder="أدخل المدينة"
-                icon={<MapPin size={16} />}
-                list="cities"
-              />
-              <datalist id="cities">{cities.map(c => <option key={c} value={c} />)}</datalist>
-            </div>
+        <div>
+          <label className="flex items-center gap-2 text-sm text-gray-500 mb-1"><FileText size={14} className="text-[#128C4F]" /> الوصف</label>
+          <textarea name="description" value={formData.description} onChange={handleChange} rows={5} placeholder="وصف تفصيلي للإعلان" className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-[#128C4F] resize-none" />
+          {errors.description && <span className="text-red-500 text-xs">{errors.description}</span>}
+        </div>
 
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-blue-100/90 flex items-center gap-2">
-                <List size={16} className="text-sky-300" /> الفئة
-              </label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full bg-black/30 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3.5 text-white outline-none focus:border-sky-400 transition-all appearance-none"
-              >
-                <option value="">اختر الفئة</option>
-                {categories.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-              {errors.category && <span className="text-sm text-red-300">{errors.category}</span>}
-            </div>
+        <div>
+          <label className="flex items-center gap-2 text-sm text-gray-500 mb-2"><Upload size={14} className="text-[#128C4F]" /> الصور</label>
+          <label className="flex items-center gap-2 border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 cursor-pointer hover:border-[#128C4F] transition text-gray-400 text-sm">
+            <Upload size={16} /> اختر صوراً
+            <input type="file" multiple accept="image/*" className="hidden" />
+          </label>
+        </div>
 
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-blue-100/90 flex items-center gap-2">
-                <FileText size={16} className="text-sky-300" /> الوصف
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows={5}
-                placeholder="أدخل وصفاً تفصيلياً للإعلان"
-                className="w-full bg-black/30 backdrop-blur-md border border-white/20 rounded-2xl px-4 py-3.5 text-white placeholder:text-blue-300/50 outline-none focus:border-sky-400 transition-all resize-none"
-              />
-              {errors.description && <span className="text-sm text-red-300">{errors.description}</span>}
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-blue-100/90 flex items-center gap-2">
-                <ImageIcon size={16} className="text-sky-300" /> الصور
-              </label>
-              <label className="flex items-center gap-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl px-4 py-3.5 cursor-pointer transition-colors">
-                <Upload size={18} className="text-sky-300" />
-                <span className="text-blue-100/80 text-sm">اختر صوراً</span>
-                <input type="file" multiple accept="image/*" onChange={handleFileChange} className="hidden" />
-              </label>
-              {formData.images.length > 0 && (
-                <p className="text-sm text-blue-200/50">تم اختيار {formData.images.length} صورة</p>
-              )}
-            </div>
-
-            <div className="flex gap-3 pt-4 border-t border-white/10">
-              <Button type="submit" variant="primary" size="lg" className="flex-1" disabled={loading}>
-                <PlusSquare size={18} /> {loading ? 'جاري النشر...' : 'نشر الإعلان'}
-              </Button>
-              <Button type="button" variant="glass" size="lg" className="flex-1" disabled={loading}>
-                <Save size={18} /> حفظ كمسودة
-              </Button>
-            </div>
-          </form>
-        </Card>
-      </div>
+        <button type="submit" disabled={loading} className="w-full bg-[#128C4F] text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-emerald-700 transition shadow-lg">
+          <PlusSquare size={18} /> {loading ? 'جاري النشر...' : 'نشر الإعلان'}
+        </button>
+      </form>
     </div>
   );
 }

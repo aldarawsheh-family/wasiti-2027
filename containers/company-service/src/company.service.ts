@@ -10,23 +10,23 @@ export class CompanyService {
   private db: Pool;
 
   constructor() {
-const dbUrl = new URL(process.env.DATABASE_URL || 'postgres://wasity:***@postgres:5432/wasity');
-dbUrl.searchParams.set('options', '-c search_path=company,public');
-this.db = new Pool({ connectionString: dbUrl.toString() });
+    const dbUrl = new URL(process.env.DATABASE_URL || 'postgres://wasity:***@postgres:5432/wasity');
+    dbUrl.searchParams.set('options', '-c search_path=company,public');
+    this.db = new Pool({ connectionString: dbUrl.toString() });
   }
 
-  async create(tenantId: string, data: { name: string; type: string; ownerId: string }) {
-    const slug = data.name
-      .toLowerCase()
-      .replace(/[^a-z0-9\u0621-\u064A]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '');
-
+  async create(tenantId: string, data: { name: string; type: string; ownerId: string; tenant_type?: string }) {
+   const randomSuffix = Math.random().toString(36).substring(2, 8);
+const slug = data.name
+  .toLowerCase()
+  .replace(/[^a-z0-9\u0621-\u064A]/g, '-')
+  .replace(/-+/g, '-')
+  .replace(/^-|-$/g, '') + '-' + randomSuffix;
     const result = await this.db.query(
-      `INSERT INTO companies (tenant_id, name, slug, type, owner_id)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO companies (tenant_id, name, slug, type, owner_id, tenant_type)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [tenantId, data.name, slug, data.type, data.ownerId],
+      [tenantId, data.name, slug, data.type, data.ownerId, data.tenant_type || null],
     );
 
     return result.rows[0];
@@ -62,21 +62,17 @@ this.db = new Pool({ connectionString: dbUrl.toString() });
       updates.push(`name = $${paramIndex++}`);
       values.push(data.name);
     }
+    if (data.type !== undefined) {
+      updates.push(`type = $${paramIndex++}`);
+      values.push(data.type);
+    }
+    if (data.tenant_type !== undefined) {
+      updates.push(`tenant_type = $${paramIndex++}`);
+      values.push(data.tenant_type);
+    }
     if (data.description !== undefined) {
       updates.push(`description = $${paramIndex++}`);
       values.push(JSON.stringify(data.description));
-    }
-    if (data.logoUrl !== undefined) {
-      updates.push(`logo_url = $${paramIndex++}`);
-      values.push(data.logoUrl);
-    }
-    if (data.website !== undefined) {
-      updates.push(`website = $${paramIndex++}`);
-      values.push(data.website);
-    }
-    if (data.phone !== undefined) {
-      updates.push(`phone = $${paramIndex++}`);
-      values.push(data.phone);
     }
 
     if (updates.length === 0) {

@@ -6,8 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth.store';
 import { getListings } from '@/features/listings/api/listings';
 import Skeleton from '@/components/ui/Skeleton';
-import { PlusSquare } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import { PlusSquare, Package, TrendingUp, Eye } from 'lucide-react';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -36,80 +35,99 @@ export default function DashboardPage() {
   if (loading || !user) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-16 h-16 border-4 border-[var(--color-primary)] border-t-transparent rounded-full animate-spin" />
+        <div className="w-16 h-16 border-4 border-[#128C4F] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
-  const displayName = user.displayName || user.email?.split('@')[0] || 'مستخدم';
-
   return (
-    <div className="space-y-6 mt-4">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-extrabold text-white">لوحة التحكم</h1>
-        <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-          <span className="text-sm">مرحباً، {displayName}</span>
-          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[#11998e] flex items-center justify-center text-[10px] font-bold text-black">
-            {displayName.charAt(0).toUpperCase()}
-          </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-extrabold text-gray-900">إعلاناتي</h2>
+          <p className="text-gray-500 text-sm mt-1">إدارة إعلاناتك ومتابعة أدائها</p>
         </div>
+        <Link href="/ar/publish">
+          <button className="flex items-center gap-2 bg-[#128C4F] text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-emerald-700 transition shadow-lg shadow-[#128C4F]/20">
+            <PlusSquare size={18} />
+            نشر إعلان جديد
+          </button>
+        </Link>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <span className="w-1.5 h-5 bg-[var(--color-primary)] rounded-full shadow-[var(--shadow-neon)]"></span>
-            إعلاناتي
-          </h2>
-          <Link href="/ar/publish">
-            <Button variant="primary" size="sm"><PlusSquare size={14} /> نشر إعلان جديد</Button>
-          </Link>
+      {/* Loading */}
+      {listingsLoading && (
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => <Skeleton key={i} height="100px" className="rounded-2xl" />)}
         </div>
+      )}
 
-        {listingsLoading && (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => <Skeleton key={i} height="100px" className="rounded-2xl" />)}
+      {/* Empty State */}
+      {!listingsLoading && myListings.length === 0 && (
+        <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gray-50 flex items-center justify-center">
+            <Package size={32} className="text-gray-300" />
           </div>
-        )}
+          <p className="text-gray-500 font-medium mb-2">ليس لديك أي إعلانات بعد</p>
+          <Link href="/ar/publish" className="text-[#128C4F] hover:underline text-sm font-semibold">انشر إعلانك الأول</Link>
+        </div>
+      )}
 
-        {!listingsLoading && myListings.length === 0 && (
-          <div className="rounded-2xl bg-[var(--bg-card)] border border-[var(--border-color)] p-8 text-center">
-            <p className="text-[var(--text-secondary)] mb-4">ليس لديك أي إعلانات بعد</p>
-            <Link href="/ar/publish" className="text-[var(--color-primary)] hover:underline text-sm">انشر إعلانك الأول</Link>
-          </div>
-        )}
-
-        {!listingsLoading && myListings.length > 0 && (
-          <div className="grid grid-cols-1 gap-4">
-            {myListings.map((item) => (
-              <Link key={item.id} href={`/ar/listing/${item.id}`}
-                className="rounded-2xl overflow-hidden bg-[var(--bg-card)] border border-[var(--border-color)] hover:border-[var(--color-primary)] transition-all flex items-stretch">
-                <div className="w-[100px] h-[100px] shrink-0 relative bg-black/30">
-                  {item.image ? <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
-                    : <div className="w-full h-full flex items-center justify-center"><span className="text-3xl">📷</span></div>}
+      {/* Listings */}
+      {!listingsLoading && myListings.length > 0 && (
+        <div className="grid grid-cols-1 gap-4">
+          {myListings.map((item) => (
+            <Link key={item.id} href={`/ar/listing/${item.id}`}
+              className="bg-white rounded-2xl border border-gray-100 hover:border-[#128C4F]/30 hover:shadow-md transition-all flex items-stretch overflow-hidden group">
+              <div className="w-[100px] h-[100px] shrink-0 bg-gray-100 flex items-center justify-center">
+                {item.image ? (
+                  <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                ) : (
+                  <Package size={36} className="text-gray-300" />
+                )}
+              </div>
+              <div className="flex-1 p-4 flex flex-col justify-between">
+                <div className="flex justify-between items-start">
+                  <h3 className="text-gray-900 font-bold text-sm truncate max-w-[60%]">{item.title}</h3>
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    {item.status || 'نشط'}
+                  </span>
                 </div>
-                <div className="flex-1 p-3 flex flex-col justify-between">
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-white font-bold text-[14px] truncate max-w-[60%]">{item.title}</h3>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-[var(--color-success)] bg-[var(--color-success)]/10 border border-[var(--color-success)]/30">
-                      {item.status || 'نشط'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-end text-[11px] text-[var(--text-secondary)]">
-                    <span>📍 {item.city}</span>
-                    <span>{Number(item.price).toLocaleString()} ل.س</span>
-                  </div>
+                <div className="flex justify-between items-end text-xs text-gray-400 mt-2">
+                  <span className="flex items-center gap-1">📍 {item.city}</span>
+                  <span className="font-bold text-gray-700">{Number(item.price).toLocaleString()} ل.س</span>
                 </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
 
-      <div className="rounded-2xl bg-[var(--bg-card)] border border-[var(--border-color)] p-6 flex flex-col items-center justify-center text-center h-[200px]">
-        <h3 className="text-[var(--text-secondary)] font-medium mb-2">إحصائيات حسابك</h3>
-        <p className="text-[var(--text-secondary)] text-sm max-w-[200px]">تابع أداء إعلاناتك وإحصائيات الزوار هنا.</p>
-        <button className="mt-4 bg-white/5 hover:bg-white/10 text-white px-6 py-1.5 rounded-full text-sm transition-colors border border-[var(--border-color)]">عرض التفاصيل</button>
+      {/* Stats Card */}
+      <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#128C4F]/10 to-emerald-50 flex items-center justify-center">
+            <TrendingUp size={20} className="text-[#128C4F]" />
+          </div>
+          <h3 className="text-lg font-bold text-gray-900">إحصائيات حسابك</h3>
+        </div>
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="bg-gray-50 rounded-xl p-4 text-center">
+            <p className="text-2xl font-extrabold text-gray-900">{myListings.length}</p>
+            <p className="text-xs text-gray-400 mt-1">إعلان</p>
+          </div>
+          <div className="bg-gray-50 rounded-xl p-4 text-center">
+            <div className="flex items-center justify-center gap-1">
+              <Eye size={16} className="text-gray-400" />
+              <p className="text-2xl font-extrabold text-gray-900">0</p>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">مشاهدة</p>
+          </div>
+        </div>
+        <button className="w-full bg-gray-50 hover:bg-gray-100 text-gray-700 px-4 py-2.5 rounded-xl text-sm font-medium transition">
+          عرض التفاصيل الكاملة
+        </button>
       </div>
     </div>
   );

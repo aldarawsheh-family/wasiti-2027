@@ -2,132 +2,113 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Toast from '@/components/ui/Toast';
-import Card from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
-import Badge from '@/components/ui/Badge';
-import Tabs from '@/components/ui/Tabs';
-import { Package, Handshake, DollarSign, Star, PlusSquare, Eye, Edit } from 'lucide-react';
+import { Package, Handshake, DollarSign, Star, PlusSquare, Eye, Edit, TrendingUp } from 'lucide-react';
 
 export default function SellerDashboardPage() {
   const [activeTab, setActiveTab] = useState('stats');
-  const [showToast, setShowToast] = useState(false);
 
   const stats = [
-    { label: 'إعلاناتي', value: '24', icon: Package, color: 'text-[var(--color-primary)]' },
-    { label: 'صفقات قيد التنفيذ', value: '5', icon: Handshake, color: 'text-[var(--color-accent)]' },
-    { label: 'إجمالي المبيعات', value: '12,400 ل.س', icon: DollarSign, color: 'text-[var(--color-success)]' },
-    { label: 'التقييم', value: '4.9 ⭐', icon: Star, color: 'text-[var(--color-warning)]' },
+    { label: 'إعلاناتي', value: '24', icon: Package, color: 'from-emerald-500 to-[#128C4F]' },
+    { label: 'صفقات نشطة', value: '5', icon: Handshake, color: 'from-violet-500 to-purple-600' },
+    { label: 'المبيعات', value: '12,400 ل.س', icon: DollarSign, color: 'from-amber-500 to-orange-600' },
+    { label: 'التقييم', value: '4.9 ⭐', icon: Star, color: 'from-sky-500 to-blue-600' },
   ];
 
   const listings = [
     { id: '1', title: 'سيارة تويوتا كورولا 2020', price: 25000, status: 'نشط', views: 120 },
     { id: '2', title: 'شقة للبيع في المزة', price: 85000, status: 'نشط', views: 85 },
     { id: '3', title: 'هاتف آيفون 15 برو', price: 3500, status: 'معلق', views: 45 },
-    { id: '4', title: 'خدمة تصميم مواقع', price: 500, status: 'محذوف', views: 12 },
-  ];
-
-  const deals = [
-    { id: '1', buyer: 'أحمد المحمد', amount: 25000, status: 'قيد التنفيذ', date: '2026-01-15' },
-    { id: '2', buyer: 'سارة عبدالله', amount: 85000, status: 'مكتملة', date: '2026-01-10' },
-    { id: '3', buyer: 'محمد علي', amount: 3500, status: 'ملغية', date: '2026-01-05' },
   ];
 
   return (
-    <div className="space-y-6">
-      {showToast && <Toast message="تم تحديث البيانات بنجاح!" type="success" onClose={() => setShowToast(false)} />}
-
-      <div className="flex items-center justify-between pt-2">
-        <h1 className="text-3xl font-bold text-white">لوحة تحكم التاجر</h1>
-        <Link href="/ar/publish"><Button variant="primary"><PlusSquare size={18} /> نشر إعلان</Button></Link>
+    <div className="max-w-6xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#128C4F] to-emerald-600 flex items-center justify-center shadow-lg">
+            <TrendingUp size={24} className="text-white" />
+          </div>
+          <h1 className="text-2xl font-extrabold text-gray-900">لوحة تحكم التاجر</h1>
+        </div>
+        <Link href="/ar/publish" className="bg-[#128C4F] text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-emerald-700 transition shadow-md">
+          <PlusSquare size={18} /> نشر إعلان
+        </Link>
       </div>
 
+      {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
-          <Card key={index} className="p-6 flex flex-col items-center justify-center gap-2 text-center" hover>
-            <stat.icon size={28} className={stat.color} />
-            <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
-            <div className="text-sm text-[var(--text-secondary)]">{stat.label}</div>
-          </Card>
+        {stats.map((stat, i) => (
+          <div key={i} className="bg-white rounded-2xl border-2 border-gray-200 p-5 text-center shadow-sm hover:shadow-md transition">
+            <div className={`w-10 h-10 mx-auto rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-3 shadow-lg`}>
+              <stat.icon size={20} className="text-white" />
+            </div>
+            <p className="text-2xl font-extrabold text-gray-900">{stat.value}</p>
+            <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+          </div>
         ))}
       </div>
 
-      <Tabs tabs={[{ label: 'الإحصائيات', value: 'stats' }, { label: 'إعلاناتي', value: 'listings' }, { label: 'صفقاتي', value: 'deals' }]} activeTab={activeTab} onTabChange={setActiveTab} variant="pills" />
-
-      <div className="space-y-4">
-        {activeTab === 'stats' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="p-6">
-              <h3 className="text-white font-bold mb-4 flex items-center gap-2"><Eye size={18} className="text-[var(--color-primary)]" /> الأكثر مشاهدة</h3>
-              <div className="space-y-2">
-                {listings.slice(0, 3).map((item) => (
-                  <div key={item.id} className="flex justify-between py-2 border-b border-[var(--border-color)]">
-                    <span className="text-[var(--text-secondary)] text-sm">{item.title}</span>
-                    <span className="text-white text-sm">{item.views} 👁️</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
-            <Card className="p-6">
-              <h3 className="text-white font-bold mb-4 flex items-center gap-2"><Handshake size={18} className="text-[var(--color-primary)]" /> آخر الصفقات</h3>
-              <div className="space-y-2">
-                {deals.slice(0, 3).map((item) => (
-                  <div key={item.id} className="flex justify-between py-2 border-b border-[var(--border-color)]">
-                    <span className="text-[var(--text-secondary)] text-sm">{item.buyer}</span>
-                    <Badge variant={item.status === 'قيد التنفيذ' ? 'primary' : item.status === 'مكتملة' ? 'success' : 'error'}>{item.status}</Badge>
-                  </div>
-                ))}
-              </div>
-            </Card>
-            <Card className="p-6">
-              <h3 className="text-white font-bold mb-4">أداء سريع</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between"><span className="text-[var(--text-secondary)]">معدل التحويل</span><span className="text-[var(--color-success)] font-bold">23%</span></div>
-                <div className="flex justify-between"><span className="text-[var(--text-secondary)]">معدل الإلغاء</span><span className="text-[var(--color-error)] font-bold">8%</span></div>
-                <div className="flex justify-between"><span className="text-[var(--text-secondary)]">إجمالي المشاهدات</span><span className="text-white font-bold">1,430</span></div>
-              </div>
-            </Card>
-          </div>
-        )}
-
-        {activeTab === 'listings' && (
-          <Card className="p-6">
-            <div className="space-y-3">
-              {listings.map((item) => (
-                <div key={item.id} className="flex items-center justify-between py-2 border-b border-[var(--border-color)] last:border-0">
-                  <div className="flex items-center gap-3">
-                    <span className="text-white font-medium">{item.title}</span>
-                    <Badge variant={item.status === 'نشط' ? 'success' : item.status === 'معلق' ? 'warning' : 'error'}>{item.status}</Badge>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-[var(--color-primary)] font-bold">{item.price.toLocaleString()} ل.س</span>
-                    <Link href={`/ar/listing/${item.id}/edit`}><Button variant="glass" size="sm"><Edit size={14} /> تعديل</Button></Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        )}
-
-        {activeTab === 'deals' && (
-          <Card className="p-6">
-            <div className="space-y-3">
-              {deals.map((item) => (
-                <div key={item.id} className="flex items-center justify-between py-2 border-b border-[var(--border-color)] last:border-0">
-                  <div className="flex items-center gap-3">
-                    <span className="text-white font-medium">{item.buyer}</span>
-                    <Badge variant={item.status === 'قيد التنفيذ' ? 'primary' : item.status === 'مكتملة' ? 'success' : 'error'}>{item.status}</Badge>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-[var(--color-primary)] font-bold">{item.amount.toLocaleString()} ل.س</span>
-                    <Button variant="glass" size="sm">تفاصيل</Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        )}
+      {/* Tabs */}
+      <div className="flex gap-2 bg-gray-100 rounded-xl p-1">
+        {['stats', 'listings'].map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition ${
+              activeTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            {tab === 'stats' ? 'الإحصائيات' : 'إعلاناتي'}
+          </button>
+        ))}
       </div>
+
+      {/* Content */}
+      {activeTab === 'stats' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white rounded-2xl border-2 border-gray-200 p-6 shadow-sm">
+            <h3 className="text-gray-900 font-bold mb-4 flex items-center gap-2"><Eye size={18} className="text-[#128C4F]" /> الأكثر مشاهدة</h3>
+            <div className="space-y-3">
+              {listings.map(item => (
+                <div key={item.id} className="flex justify-between py-2 border-b border-gray-100 last:border-0">
+                  <span className="text-gray-600 text-sm">{item.title}</span>
+                  <span className="text-gray-900 font-semibold text-sm">{item.views} 👁️</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl border-2 border-gray-200 p-6 shadow-sm">
+            <h3 className="text-gray-900 font-bold mb-4">أداء سريع</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between"><span className="text-gray-500">معدل التحويل</span><span className="text-emerald-600 font-bold">23%</span></div>
+              <div className="flex justify-between"><span className="text-gray-500">معدل الإلغاء</span><span className="text-red-500 font-bold">8%</span></div>
+              <div className="flex justify-between"><span className="text-gray-500">إجمالي المشاهدات</span><span className="text-gray-900 font-bold">1,430</span></div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'listings' && (
+        <div className="bg-white rounded-2xl border-2 border-gray-200 p-6 shadow-sm">
+          <div className="space-y-3">
+            {listings.map(item => (
+              <div key={item.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                <div className="flex items-center gap-3">
+                  <span className="text-gray-900 font-semibold">{item.title}</span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                    item.status === 'نشط' ? 'bg-emerald-50 text-emerald-700' :
+                    item.status === 'معلق' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-600'
+                  }`}>{item.status}</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-[#128C4F] font-bold">{item.price.toLocaleString()} ل.س</span>
+                  <Link href={`/ar/listing/${item.id}/edit`} className="text-gray-400 hover:text-[#128C4F] transition"><Edit size={16} /></Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

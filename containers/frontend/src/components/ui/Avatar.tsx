@@ -33,10 +33,10 @@ export default function Avatar({
       className={`
         flex items-center justify-center
         rounded-full 
-        bg-gradient-to-br from-sky-300 to-blue-500
+        bg-gradient-to-br from-emerald-300 to-[#128C4F]
         border border-white/30
         text-white font-bold
-        shadow-lg shadow-blue-500/20
+        shadow-lg shadow-[#128C4F]/20
         overflow-hidden
         ${sizeClasses[size]}
         ${className}

@@ -1,4 +1,4 @@
-﻿import { Controller, Post, Put, Body, Param, UseGuards, Req, Logger } from '@nestjs/common';
+﻿import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards, Req, Logger } from '@nestjs/common';
 import { ListingService } from './listing.service';
 import { AuthGuard } from './common/guards/auth.guard';
 import { TenantGuard } from './common/guards/tenant.guard';
@@ -9,6 +9,16 @@ export class ListingController {
   private readonly logger = new Logger('ListingController');
 
   constructor(private readonly listingService: ListingService) {}
+
+ @Get()
+@UseGuards(TenantGuard)
+async getAll(@Req() req: any, @Query('limit') limit?: string, @Query('offset') offset?: string) {
+    return this.listingService.getAll(req.tenantId, limit ? parseInt(limit) : 50, offset ? parseInt(offset) : 0);
+}
+  @Get(':id')
+  async getById(@Param('id') id: string, @Req() req: any) {
+    return this.listingService.getById(req.tenantId, id);
+  }
 
   @Post()
   @UseGuards(AuthGuard, TenantGuard, RolesGuard)
@@ -27,4 +37,11 @@ export class ListingController {
     const tenantId = req.tenantId;
     return this.listingService.update(tenantId, id, body);
   }
+  @Delete(':id')
+  @UseGuards(AuthGuard, TenantGuard, RolesGuard)
+  @Roles('SELLER', 'ADMIN', 'PLATFORM_OWNER')
+  async delete(@Param('id') id: string, @Req() req: any) {
+    return this.listingService.delete(req.tenantId, id);
+  }
+
 }

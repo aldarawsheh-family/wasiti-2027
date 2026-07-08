@@ -1,11 +1,11 @@
-// WASITI 2027 — دوال الحجوزات (Booking API)
-// المسار: src/lib/api/booking.ts
+// WASITI 2027 â€” ط¯ظˆط§ظ„ ط§ظ„ط­ط¬ظˆط²ط§طھ (Booking API)
+// ط§ظ„ظ…ط³ط§ط±: src/lib/api/booking.ts
 
-import { api } from './client';
+import { api } from '@/lib/api/client';
 
-// --- جلب قائمة الخدمات ---
+// --- ط¬ظ„ط¨ ظ‚ط§ط¦ظ…ط© ط§ظ„ط®ط¯ظ…ط§طھ ---
 export const getServices = async (params?: {
-  type?: 'فندق' | 'مطعم' | 'سفر';
+  type?: 'ظپظ†ط¯ظ‚' | 'ظ…ط·ط¹ظ…' | 'ط³ظپط±';
   location?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -29,13 +29,13 @@ export const getServices = async (params?: {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب الخدمات');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ ط§ظ„ط®ط¯ظ…ط§طھ');
   } catch (error) {
     throw error;
   }
 };
 
-// --- جلب تفاصيل خدمة ---
+// --- ط¬ظ„ط¨ طھظپط§طµظٹظ„ ط®ط¯ظ…ط© ---
 export const getService = async (id: string) => {
   try {
     const response = await api.get<{
@@ -46,13 +46,13 @@ export const getService = async (id: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب تفاصيل الخدمة');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ طھظپط§طµظٹظ„ ط§ظ„ط®ط¯ظ…ط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- إنشاء حجز جديد ---
+// --- ط¥ظ†ط´ط§ط، ط­ط¬ط² ط¬ط¯ظٹط¯ ---
 export const createReservation = async (data: {
   serviceId: string;
   customerName: string;
@@ -73,13 +73,13 @@ export const createReservation = async (data: {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل إنشاء الحجز');
+    throw new Error('ظپط´ظ„ ط¥ظ†ط´ط§ط، ط§ظ„ط­ط¬ط²');
   } catch (error) {
     throw error;
   }
 };
 
-// --- جلب تفاصيل الحجز ---
+// --- ط¬ظ„ط¨ طھظپط§طµظٹظ„ ط§ظ„ط­ط¬ط² ---
 export const getReservation = async (id: string) => {
   try {
     const response = await api.get<{
@@ -90,13 +90,13 @@ export const getReservation = async (id: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب تفاصيل الحجز');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ طھظپط§طµظٹظ„ ط§ظ„ط­ط¬ط²');
   } catch (error) {
     throw error;
   }
 };
 
-// --- التحقق من التوفر ---
+// --- ط§ظ„طھط­ظ‚ظ‚ ظ…ظ† ط§ظ„طھظˆظپط± ---
 export const getAvailability = async (serviceId: string, date: string) => {
   try {
     const response = await api.get<{
@@ -112,13 +112,13 @@ export const getAvailability = async (serviceId: string, date: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل التحقق من التوفر');
+    throw new Error('ظپط´ظ„ ط§ظ„طھط­ظ‚ظ‚ ظ…ظ† ط§ظ„طھظˆظپط±');
   } catch (error) {
     throw error;
   }
 };
 
-// --- جلب الخصومات ---
+// --- ط¬ظ„ط¨ ط§ظ„ط®طµظˆظ…ط§طھ ---
 export const getDiscounts = async (serviceId?: string) => {
   try {
     const url = serviceId ? `/booking/discounts?serviceId=${serviceId}` : '/booking/discounts';
@@ -136,7 +136,7 @@ export const getDiscounts = async (serviceId?: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب الخصومات');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ ط§ظ„ط®طµظˆظ…ط§طھ');
   } catch (error) {
     throw error;
   }

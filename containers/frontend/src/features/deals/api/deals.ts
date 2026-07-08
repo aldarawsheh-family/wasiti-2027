@@ -1,9 +1,9 @@
-// WASITI 2027 — دوال الصفقات (Deals API)
-// المسار: src/lib/api/deals.ts
+// WASITI 2027 â€” ط¯ظˆط§ظ„ ط§ظ„طµظپظ‚ط§طھ (Deals API)
+// ط§ظ„ظ…ط³ط§ط±: src/lib/api/deals.ts
 
-import { api } from './client';
+import { api } from '@/lib/api/client';
 
-// --- جلب قائمة الصفقات ---
+// --- ط¬ظ„ط¨ ظ‚ط§ط¦ظ…ط© ط§ظ„طµظپظ‚ط§طھ ---
 export const getDeals = async (params?: {
   status?: 'PENDING' | 'ACCEPTED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
   page?: number;
@@ -34,13 +34,13 @@ export const getDeals = async (params?: {
     if (response.data.success) {
       return response.data;
     }
-    throw new Error('فشل جلب الصفقات');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ ط§ظ„طµظپظ‚ط§طھ');
   } catch (error) {
     throw error;
   }
 };
 
-// --- جلب تفاصيل صفقة ---
+// --- ط¬ظ„ط¨ طھظپط§طµظٹظ„ طµظپظ‚ط© ---
 export const getDeal = async (id: string) => {
   try {
     const response = await api.get<{
@@ -51,13 +51,13 @@ export const getDeal = async (id: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب تفاصيل الصفقة');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ طھظپط§طµظٹظ„ ط§ظ„طµظپظ‚ط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- إنشاء صفقة جديدة ---
+// --- ط¥ظ†ط´ط§ط، طµظپظ‚ط© ط¬ط¯ظٹط¯ط© ---
 export const createDeal = async (data: {
   listingId: string;
   buyerId: string;
@@ -73,13 +73,13 @@ export const createDeal = async (data: {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل إنشاء الصفقة');
+    throw new Error('ظپط´ظ„ ط¥ظ†ط´ط§ط، ط§ظ„طµظپظ‚ط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- قبول الصفقة ---
+// --- ظ‚ط¨ظˆظ„ ط§ظ„طµظپظ‚ط© ---
 export const acceptDeal = async (id: string) => {
   try {
     const response = await api.put<{
@@ -90,13 +90,13 @@ export const acceptDeal = async (id: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل قبول الصفقة');
+    throw new Error('ظپط´ظ„ ظ‚ط¨ظˆظ„ ط§ظ„طµظپظ‚ط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- رفض الصفقة ---
+// --- ط±ظپط¶ ط§ظ„طµظپظ‚ط© ---
 export const rejectDeal = async (id: string) => {
   try {
     const response = await api.put<{
@@ -107,13 +107,13 @@ export const rejectDeal = async (id: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل رفض الصفقة');
+    throw new Error('ظپط´ظ„ ط±ظپط¶ ط§ظ„طµظپظ‚ط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- إكمال الصفقة ---
+// --- ط¥ظƒظ…ط§ظ„ ط§ظ„طµظپظ‚ط© ---
 export const completeDeal = async (id: string) => {
   try {
     const response = await api.put<{
@@ -124,13 +124,13 @@ export const completeDeal = async (id: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل إكمال الصفقة');
+    throw new Error('ظپط´ظ„ ط¥ظƒظ…ط§ظ„ ط§ظ„طµظپظ‚ط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- إلغاء الصفقة ---
+// --- ط¥ظ„ط؛ط§ط، ط§ظ„طµظپظ‚ط© ---
 export const cancelDeal = async (id: string) => {
   try {
     const response = await api.put<{
@@ -141,7 +141,7 @@ export const cancelDeal = async (id: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل إلغاء الصفقة');
+    throw new Error('ظپط´ظ„ ط¥ظ„ط؛ط§ط، ط§ظ„طµظپظ‚ط©');
   } catch (error) {
     throw error;
   }

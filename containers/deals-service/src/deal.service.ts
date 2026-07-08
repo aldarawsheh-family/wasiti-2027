@@ -58,6 +58,18 @@ export class DealService {
     return result.rows;
   }
 
+  async listAll(tenantId: string) {
+    const result = await this.db.query(
+      `SELECT d.*, l.title as listing_title
+       FROM deals d
+       LEFT JOIN listing.listings l ON d.listing_id = l.id
+       WHERE d.tenant_id = $1
+       ORDER BY d.created_at DESC`,
+      [tenantId],
+    );
+    return result.rows;
+  }
+
   async transition(tenantId: string, id: string, toStatus: string, userId: string, note?: string) {
     const deal = await this.getById(tenantId, id);
     const fromStatus = deal.status;

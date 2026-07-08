@@ -1,89 +1,29 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Skeleton from '@/components/ui/Skeleton';
-import { getListings } from '@/features/listings/api/listings';
-import Link from 'next/link';
-import { Heart, MapPin } from 'lucide-react';
+import React from 'react';
+import { Building2, Users, FileCheck, Star } from 'lucide-react';
+
+const stats = [
+  { icon: FileCheck, value: '128,547', label: 'إعلان نشط' },
+  { icon: Users, value: '45,892', label: 'تاجر موثوق' },
+  { icon: Building2, value: '12,458', label: 'شركة مسجلة' },
+  { icon: Star, value: '98%', label: 'معدل رضا العملاء' },
+];
 
 export default function Stats() {
-  const [listings, setListings] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    getListings({ limit: 4, sort: 'newest' })
-      .then((res) => {
-        const data = res.data || res;
-        const list = Array.isArray(data) ? data : data.data || [];
-        setListings(list.slice(0, 4));
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
-
   return (
-    <div className="px-4 space-y-3 pt-2 pb-4">
-      <div className="flex justify-between items-center px-1">
-        <h2 className="text-lg font-bold text-white flex items-center gap-2 drop-shadow-md">
-          <span className="w-1.5 h-5 bg-blue-400 rounded-full shadow-[0_0_10px_rgba(96,165,250,0.5)]"></span>
-          حديثة
-        </h2>
+    <div className="max-w-6xl mx-auto -mt-16 relative z-10 px-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 bg-white/30 backdrop-blur-xl rounded-[24px] shadow-sm p-6 border border-white/40">
+        {stats.map((stat, index) => (
+          <div key={index} className="flex flex-col items-center text-center gap-2">
+            <div className="w-12 h-12 rounded-full bg-[#22C55E]/20 backdrop-blur-sm flex items-center justify-center border border-[#22C55E]/30">
+              <stat.icon size={24} className="text-[#22C55E]" />
+            </div>
+            <div className="text-2xl font-bold text-[#111827]">{stat.value}</div>
+            <div className="text-sm text-[#6B7280]">{stat.label}</div>
+          </div>
+        ))}
       </div>
-
-      {loading && (
-        <div className="grid grid-cols-2 gap-3">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} height="200px" className="rounded-2xl" />
-          ))}
-        </div>
-      )}
-
-      {!loading && listings.length === 0 && (
-        <p className="text-blue-200/50 text-center py-8">لا توجد إعلانات حديثة</p>
-      )}
-
-      {!loading && listings.length > 0 && (
-        <div className="grid grid-cols-2 gap-3">
-          {listings.map((item) => (
-            <Link
-              key={item.id}
-              href={`/ar/listing/${item.id}`}
-              className="rounded-2xl overflow-hidden bg-white/20 backdrop-blur-md group cursor-pointer transition-all border border-white/25 hover:border-cyan-400/30 hover:shadow-[0_0_20px_rgba(56,189,248,0.15)] flex flex-col"
-            >
-              <div className="relative aspect-[4/3.5] w-full overflow-hidden">
-                <div
-                  className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                  style={{
-                    backgroundImage: item.image ? `url(${item.image})` : undefined,
-                  }}
-                >
-                  {!item.image && (
-                    <div className="w-full h-full bg-[#1a252e] flex items-center justify-center">
-                      <span className="text-4xl">📷</span>
-                    </div>
-                  )}
-                </div>
-                <button className="absolute top-2 right-2 bg-[#1D3E66]/60 backdrop-blur-sm p-1.5 rounded-full hover:bg-white/20 transition-colors z-10">
-                  <Heart size={15} className="text-white/70" />
-                </button>
-              </div>
-
-              <div className="p-3 flex flex-col gap-1.5 bg-white/20">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-white font-medium text-[13px] truncate max-w-[65%]">{item.title}</h3>
-                  <span className="text-cyan-300 font-bold text-[11px] bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/20">
-                    {Number(item.price).toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 text-[10px] text-blue-300/50 mt-0.5">
-                  <MapPin size={12} className="text-blue-300/50" />
-                  <span>{item.city}</span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

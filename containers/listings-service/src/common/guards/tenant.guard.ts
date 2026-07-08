@@ -4,17 +4,13 @@
 export class TenantGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-    const jwtTenantId = request.tenantId;
-    const headerTenantId = request.headers['tenant-id'];
+    const tenantId = request.headers['tenant-id'] || request.tenantId;
 
-    if (!jwtTenantId) {
+    if (!tenantId) {
       throw new ForbiddenException('No tenant context found');
     }
 
-    if (headerTenantId && headerTenantId !== jwtTenantId) {
-      throw new ForbiddenException('Tenant mismatch');
-    }
-
+    request.tenantId = tenantId;
     return true;
   }
 }

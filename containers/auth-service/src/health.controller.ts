@@ -1,9 +1,12 @@
 ﻿import { Controller, Get } from '@nestjs/common';
+import { HealthAggregatorService } from './common/services/health-aggregator.service';
 
-@Controller('health')
+@Controller('system')
 export class HealthController {
-  @Get()
-  check() {
-    return { status: 'ok', service: 'auth-service', timestamp: new Date() };
+  constructor(private readonly healthService: HealthAggregatorService) {}
+
+  @Get('health')
+  async getHealth() {
+    return this.healthService.getHealthStatus();
   }
 }

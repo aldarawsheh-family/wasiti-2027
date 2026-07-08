@@ -1,7 +1,7 @@
 // WASITI 2027 — دوال الذكاء الاصطناعي (AI API)
 // المسار: src/lib/api/ai.ts
 
-import { api } from './client';
+import { api } from '@/lib/api/client';
 
 // --- جلب التوصيات المخصصة ---
 export const getRecommendations = async (params?: {

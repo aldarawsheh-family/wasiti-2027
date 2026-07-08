@@ -1,25 +1,20 @@
-// WASITI 2027 — Root Layout (النسخة النهائية باستخدام @/)
-// المسار: app/[locale]/layout.tsx
-
-import '@/styles/globals.css'; // ✅ استخدام @ للإشارة إلى مجلد src
+import '@/styles/globals.css';
+import AuthProvider from '@/components/auth/AuthProvider';
 
 interface RootLayoutProps {
   children: React.ReactNode;
-  params: {
-    locale: string;
-  };
+  params: { locale: string };
 }
 
-export default function RootLayout({
-  children,
-  params,
-}: RootLayoutProps) {
+export default function RootLayout({ children, params }: RootLayoutProps) {
   const locale = params.locale || 'ar';
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
   return (
     <html lang={locale} dir={dir}>
-      <body>{children}</body>
+      <body>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

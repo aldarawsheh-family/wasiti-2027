@@ -1,96 +1,138 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Card from '@/components/ui/Card';
-import Table from '@/components/ui/Table';
-import Button from '@/components/ui/Button';
-import Badge from '@/components/ui/Badge';
-import Skeleton from '@/components/ui/Skeleton';
-import { Users, ToggleLeft, ToggleRight, Trash2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useAuthStore } from '@/stores/auth.store';
+import { Building2, Settings, Ban, X, Save } from 'lucide-react';
 
 export default function AdminTenantsPage() {
+  const { accessToken } = useAuthStore();
+  const [companies, setCompanies] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tenants, setTenants] = useState([]);
+  const [editModal, setEditModal] = useState<any>(null);
+  const [editName, setEditName] = useState('');
+  const [editType, setEditType] = useState('');
+  const tenantId = '00000000-0000-0000-0000-000000000001';
 
-  useEffect(() => {
+  const fetchCompanies = () => {
+    if (!accessToken) return;
     setLoading(true);
-    fetch('http://localhost:8080/api/tenants/')
+    fetch('/api/companies', {
+      headers: { 'Authorization': 'Bearer ' + accessToken, 'tenant-id': tenantId }
+    })
       .then(r => r.json())
       .then(data => {
-        const list = data?.data || data || [];
-        setTenants(Array.isArray(list) ? list : []);
+        setCompanies(Array.isArray(data) ? data : []);
         setLoading(false);
       })
-      .catch(() => {
-        setTenants([]);
-        setLoading(false);
+      .catch(() => { setCompanies([]); setLoading(false); });
+  };
+
+  useEffect(() => { fetchCompanies(); }, [accessToken]);
+
+  const openEdit = (company: any) => {
+    setEditModal(company);
+    setEditName(company.name || '');
+    setEditType(company.type || '');
+  };
+
+  const handleSave = async () => {
+    if (!editModal) return;
+    try {
+      await fetch(`/api/companies/${editModal.id}`, {
+        method: 'PUT',
+        headers: { 'Authorization': 'Bearer ' + accessToken, 'tenant-id': tenantId, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: editName, type: editType })
       });
-  }, []);
+      setEditModal(null);
+      fetchCompanies();
+    } catch {}
+  };
 
-  const columns = [
-    { key: 'name', label: 'اسم المستأجر' },
-    { key: 'slug', label: 'Slug' },
-    { key: 'type', label: 'نوع الاشتراك' },
-    { key: 'status', label: 'الحالة' },
-    { key: 'createdAt', label: 'تاريخ الإنشاء' },
-    { key: 'actions', label: 'إجراءات' },
-  ];
-
-  const tableData = tenants.map((tenant) => ({
-    name: <span className="font-medium text-white">{tenant.name || tenant.slug}</span>,
-    slug: <span className="text-blue-200/50 text-sm">{tenant.slug}</span>,
-    type: <Badge variant="secondary">{tenant.type || tenant.subscription || '—'}</Badge>,
-    status: (
-      <Badge variant={tenant.is_active ? 'success' : 'error'}>
-        {tenant.is_active ? 'نشط' : 'غير نشط'}
-      </Badge>
-    ),
-    createdAt: <span className="text-blue-200/60">{new Date(tenant.created_at).toLocaleDateString('ar')}</span>,
-    actions: (
-      <div className="flex gap-2">
-        <Button variant="glass" size="sm">
-          {tenant.is_active ? (
-            <><ToggleRight size={14} /> تعطيل</>
-          ) : (
-            <><ToggleLeft size={14} /> تفعيل</>
-          )}
-        </Button>
-        <Button variant="danger" size="sm">
-          <Trash2 size={14} /> حذف
-        </Button>
-      </div>
-    ),
-  }));
-
-  return (
-    <div className="min-h-screen bg-[#1D3E66] text-white font-sans relative overflow-x-hidden">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1D3E66] via-[#2A5783] to-[#12263A]"></div>
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(103,232,249,0.35),transparent_70%)]"></div>
-      </div>
-
-      <div className="relative z-10 p-6">
-        <div className="max-w-6xl mx-auto space-y-6">
-          <div className="flex items-center gap-3 pt-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center">
-              <Users size={20} className="text-white" />
-            </div>
-            <h1 className="text-3xl font-bold text-white">إدارة المستأجرين</h1>
-          </div>
-
-          <Card className="p-0 overflow-hidden">
-            {loading ? (
-              <div className="p-4 space-y-3">
-                {[1, 2, 3, 4, 5].map((i) => <Skeleton key={i} height="40px" />)}
-              </div>
-            ) : tenants.length === 0 ? (
-              <div className="text-center py-8 text-blue-200/40">لا يوجد مستأجرين</div>
-            ) : (
-              <Table columns={columns} data={tableData} emptyMessage="لا يوجد مستأجرين" />
-            )}
-          </Card>
+  if (loading) {
+    return (
+      <div className="p-8 max-w-7xl mx-auto">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded-2xl w-64"></div>
+          <div className="h-48 bg-gray-100 rounded-2xl"></div>
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
+      <div className="flex items-center gap-4">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#128C4F] to-emerald-600 flex items-center justify-center shadow-xl shadow-[#128C4F]/30">
+          <Building2 size={28} className="text-white" />
+        </div>
+        <div>
+          <h1 className="text-3xl font-extrabold text-gray-900">المستأجرين والشركات</h1>
+          <p className="text-gray-500 mt-0.5">{companies.length} شركة مسجلة</p>
+        </div>
+      </div>
+
+      {companies.length === 0 ? (
+        <div className="bg-white rounded-3xl border-2 border-dashed border-gray-300 p-16 text-center">
+          <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-gray-100 flex items-center justify-center">
+            <Building2 size={40} className="text-gray-400" />
+          </div>
+          <p className="text-gray-500 text-lg font-medium">لا يوجد شركات</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {companies.map((c: any) => (
+            <div key={c.id} className="bg-white rounded-2xl border-2 border-gray-200 p-6 shadow-sm hover:shadow-md transition">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">{c.name}</h3>
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">نشط</span>
+              </div>
+              <div className="space-y-2 text-sm text-gray-500">
+                <div className="flex justify-between"><span>النوع</span><span className="text-gray-700 font-semibold">{c.type || '—'}</span></div>
+                <div className="flex justify-between"><span>المالك</span><span className="text-gray-700 font-semibold">{c.owner_id?.substring(0, 8) || '—'}</span></div>
+              </div>
+              <div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">
+                <button onClick={() => openEdit(c)} className="flex-1 py-2.5 rounded-xl bg-[#128C4F] text-white text-sm font-semibold hover:bg-emerald-700 transition flex items-center justify-center gap-1">
+                  <Settings size={14} /> إعدادات
+                </button>
+                <button className="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-600 text-sm font-semibold hover:bg-gray-200 transition flex items-center justify-center gap-1">
+                  <Ban size={14} /> تعطيل
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setEditModal(null)}>
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-gray-900">إعدادات الشركة</h2>
+              <button onClick={() => setEditModal(null)} className="p-2 rounded-xl hover:bg-gray-100"><X size={20} /></button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">اسم الشركة</label>
+                <input value={editName} onChange={e => setEditName(e.target.value)} className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-[#128C4F]" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">النوع</label>
+                <select value={editType} onChange={e => setEditType(e.target.value)} className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-gray-900 outline-none focus:border-[#128C4F] bg-white">
+                  <option value="ENTERPRISE">مؤسسة</option>
+                  <option value="DEALER">تاجر</option>
+                  <option value="SHOP">متجر</option>
+                  <option value="TECHNOLOGY">تقنية</option>
+                  <option value="SERVICE">خدمات</option>
+                </select>
+              </div>
+              <button onClick={handleSave} className="w-full bg-[#128C4F] text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-emerald-700 transition">
+                <Save size={18} /> حفظ التغييرات
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

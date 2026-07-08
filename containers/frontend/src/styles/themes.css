@@ -2,14 +2,15 @@
    WASITI 2027 — Themes
    ══════════════════════════════════════════════════ */
 
-[data-theme="dark"] {
-  --bg-primary: #05080F;
-  --text-primary: #ffffff;
-  --text-secondary: #9ca3af;
+[data-theme="light"],
+:root {
+  --bg-primary: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
 }
 
-[data-theme="light"] {
-  --bg-primary: #f8fafc;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
+[data-theme="dark"] {
+  --bg-primary: #0f172a;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
 }

@@ -1,9 +1,9 @@
-// WASITI 2027 — دوال النقل (Transport API)
-// المسار: src/lib/api/transport.ts
+// WASITI 2027 â€” ط¯ظˆط§ظ„ ط§ظ„ظ†ظ‚ظ„ (Transport API)
+// ط§ظ„ظ…ط³ط§ط±: src/lib/api/transport.ts
 
-import { api } from './client';
+import { api } from '@/lib/api/client';
 
-// --- جلب قائمة الرحلات ---
+// --- ط¬ظ„ط¨ ظ‚ط§ط¦ظ…ط© ط§ظ„ط±ط­ظ„ط§طھ ---
 export const getTrips = async (params?: {
   from?: string;
   to?: string;
@@ -23,7 +23,7 @@ export const getTrips = async (params?: {
         price: number;
         totalSeats: number;
         availableSeats: number;
-        status: 'متاح' | 'مكتمل' | 'ملغي';
+        status: 'ظ…طھط§ط­' | 'ظ…ظƒطھظ…ظ„' | 'ظ…ظ„ط؛ظٹ';
         company: string;
       }>;
       total: number;
@@ -32,13 +32,13 @@ export const getTrips = async (params?: {
     if (response.data.success) {
       return response.data;
     }
-    throw new Error('فشل جلب الرحلات');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ ط§ظ„ط±ط­ظ„ط§طھ');
   } catch (error) {
     throw error;
   }
 };
 
-// --- جلب تفاصيل رحلة ---
+// --- ط¬ظ„ط¨ طھظپط§طµظٹظ„ ط±ط­ظ„ط© ---
 export const getTrip = async (id: string) => {
   try {
     const response = await api.get<{
@@ -49,13 +49,13 @@ export const getTrip = async (id: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب تفاصيل الرحلة');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ طھظپط§طµظٹظ„ ط§ظ„ط±ط­ظ„ط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- إنشاء حجز جديد ---
+// --- ط¥ظ†ط´ط§ط، ط­ط¬ط² ط¬ط¯ظٹط¯ ---
 export const createBooking = async (data: {
   tripId: string;
   passengerName: string;
@@ -76,13 +76,13 @@ export const createBooking = async (data: {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل إنشاء الحجز');
+    throw new Error('ظپط´ظ„ ط¥ظ†ط´ط§ط، ط§ظ„ط­ط¬ط²');
   } catch (error) {
     throw error;
   }
 };
 
-// --- جلب تفاصيل الحجز ---
+// --- ط¬ظ„ط¨ طھظپط§طµظٹظ„ ط§ظ„ط­ط¬ط² ---
 export const getBooking = async (id: string) => {
   try {
     const response = await api.get<{
@@ -93,13 +93,13 @@ export const getBooking = async (id: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب تفاصيل الحجز');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ طھظپط§طµظٹظ„ ط§ظ„ط­ط¬ط²');
   } catch (error) {
     throw error;
   }
 };
 
-// --- جلب بيانات التذكرة ---
+// --- ط¬ظ„ط¨ ط¨ظٹط§ظ†ط§طھ ط§ظ„طھط°ظƒط±ط© ---
 export const getTicket = async (bookingId: string) => {
   try {
     const response = await api.get<{
@@ -110,13 +110,13 @@ export const getTicket = async (bookingId: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب التذكرة');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ ط§ظ„طھط°ظƒط±ط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- البحث عن مسارات ---
+// --- ط§ظ„ط¨ط­ط« ط¹ظ† ظ…ط³ط§ط±ط§طھ ---
 export const searchRoutes = async (params: {
   from: string;
   to: string;
@@ -137,7 +137,7 @@ export const searchRoutes = async (params: {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل البحث عن المسارات');
+    throw new Error('ظپط´ظ„ ط§ظ„ط¨ط­ط« ط¹ظ† ط§ظ„ظ…ط³ط§ط±ط§طھ');
   } catch (error) {
     throw error;
   }

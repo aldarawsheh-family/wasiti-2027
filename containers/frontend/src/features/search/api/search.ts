@@ -1,9 +1,9 @@
-// WASITI 2027 — دوال البحث (Search API)
-// المسار: src/lib/api/search.ts
+// WASITI 2027 â€” ط¯ظˆط§ظ„ ط§ظ„ط¨ط­ط« (Search API)
+// ط§ظ„ظ…ط³ط§ط±: src/lib/api/search.ts
 
-import { api } from './client';
+import { api } from '@/lib/api/client';
 
-// --- تنفيذ البحث المتقدم ---
+// --- طھظ†ظپظٹط° ط§ظ„ط¨ط­ط« ط§ظ„ظ…طھظ‚ط¯ظ… ---
 export const search = async (params: {
   q?: string;
   category?: string;
@@ -26,13 +26,13 @@ export const search = async (params: {
     if (response.data.success) {
       return response.data;
     }
-    throw new Error('فشل تنفيذ البحث');
+    throw new Error('ظپط´ظ„ طھظ†ظپظٹط° ط§ظ„ط¨ط­ط«');
   } catch (error) {
     throw error;
   }
 };
 
-// --- جلب اقتراحات البحث (للمربع التلقائي) ---
+// --- ط¬ظ„ط¨ ط§ظ‚طھط±ط§ط­ط§طھ ط§ظ„ط¨ط­ط« (ظ„ظ„ظ…ط±ط¨ط¹ ط§ظ„طھظ„ظ‚ط§ط¦ظٹ) ---
 export const getSuggestions = async (query: string) => {
   try {
     const response = await api.get<{
@@ -43,13 +43,13 @@ export const getSuggestions = async (query: string) => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب الاقتراحات');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ ط§ظ„ط§ظ‚طھط±ط§ط­ط§طھ');
   } catch (error) {
     throw error;
   }
 };
 
-// --- جلب قائمة عمليات البحث المحفوظة ---
+// --- ط¬ظ„ط¨ ظ‚ط§ط¦ظ…ط© ط¹ظ…ظ„ظٹط§طھ ط§ظ„ط¨ط­ط« ط§ظ„ظ…ط­ظپظˆط¸ط© ---
 export const getSavedSearches = async () => {
   try {
     const response = await api.get<{
@@ -65,13 +65,13 @@ export const getSavedSearches = async () => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب عمليات البحث المحفوظة');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ ط¹ظ…ظ„ظٹط§طھ ط§ظ„ط¨ط­ط« ط§ظ„ظ…ط­ظپظˆط¸ط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- حفظ عملية بحث ---
+// --- ط­ظپط¸ ط¹ظ…ظ„ظٹط© ط¨ط­ط« ---
 export const saveSearch = async (data: {
   query?: string;
   filters?: any;
@@ -85,13 +85,13 @@ export const saveSearch = async (data: {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل حفظ البحث');
+    throw new Error('ظپط´ظ„ ط­ظپط¸ ط§ظ„ط¨ط­ط«');
   } catch (error) {
     throw error;
   }
 };
 
-// --- حذف عملية بحث محفوظة ---
+// --- ط­ط°ظپ ط¹ظ…ظ„ظٹط© ط¨ط­ط« ظ…ط­ظپظˆط¸ط© ---
 export const deleteSavedSearch = async (id: string) => {
   try {
     const response = await api.delete<{
@@ -102,7 +102,7 @@ export const deleteSavedSearch = async (id: string) => {
     if (response.data.success) {
       return response.data;
     }
-    throw new Error('فشل حذف البحث المحفوظ');
+    throw new Error('ظپط´ظ„ ط­ط°ظپ ط§ظ„ط¨ط­ط« ط§ظ„ظ…ط­ظپظˆط¸');
   } catch (error) {
     throw error;
   }

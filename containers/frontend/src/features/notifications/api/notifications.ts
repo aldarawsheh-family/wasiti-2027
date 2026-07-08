@@ -1,9 +1,9 @@
-// WASITI 2027 — دوال الإشعارات (Notifications API)
-// المسار: src/lib/api/notifications.ts
+// WASITI 2027 â€” ط¯ظˆط§ظ„ ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ (Notifications API)
+// ط§ظ„ظ…ط³ط§ط±: src/lib/api/notifications.ts
 
-import { api } from './client';
+import { api } from '@/lib/api/client';
 
-// --- جلب قائمة الإشعارات ---
+// --- ط¬ظ„ط¨ ظ‚ط§ط¦ظ…ط© ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ ---
 export const getNotifications = async (params?: {
   page?: number;
   limit?: number;
@@ -28,13 +28,13 @@ export const getNotifications = async (params?: {
     if (response.data.success) {
       return response.data;
     }
-    throw new Error('فشل جلب الإشعارات');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ');
   } catch (error) {
     throw error;
   }
 };
 
-// --- تحديد إشعار كمقروء ---
+// --- طھط­ط¯ظٹط¯ ط¥ط´ط¹ط§ط± ظƒظ…ظ‚ط±ظˆط، ---
 export const markRead = async (id: string) => {
   try {
     const response = await api.put<{
@@ -45,13 +45,13 @@ export const markRead = async (id: string) => {
     if (response.data.success) {
       return response.data;
     }
-    throw new Error('فشل تحديد الإشعار كمقروء');
+    throw new Error('ظپط´ظ„ طھط­ط¯ظٹط¯ ط§ظ„ط¥ط´ط¹ط§ط± ظƒظ…ظ‚ط±ظˆط،');
   } catch (error) {
     throw error;
   }
 };
 
-// --- تحديد جميع الإشعارات كمقروءة ---
+// --- طھط­ط¯ظٹط¯ ط¬ظ…ظٹط¹ ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ ظƒظ…ظ‚ط±ظˆط،ط© ---
 export const markAllRead = async () => {
   try {
     const response = await api.put<{
@@ -62,13 +62,13 @@ export const markAllRead = async () => {
     if (response.data.success) {
       return response.data;
     }
-    throw new Error('فشل تحديد الإشعارات كمقروءة');
+    throw new Error('ظپط´ظ„ طھط­ط¯ظٹط¯ ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ ظƒظ…ظ‚ط±ظˆط،ط©');
   } catch (error) {
     throw error;
   }
 };
 
-// --- حذف إشعار ---
+// --- ط­ط°ظپ ط¥ط´ط¹ط§ط± ---
 export const deleteNotification = async (id: string) => {
   try {
     const response = await api.delete<{
@@ -79,13 +79,13 @@ export const deleteNotification = async (id: string) => {
     if (response.data.success) {
       return response.data;
     }
-    throw new Error('فشل حذف الإشعار');
+    throw new Error('ظپط´ظ„ ط­ط°ظپ ط§ظ„ط¥ط´ط¹ط§ط±');
   } catch (error) {
     throw error;
   }
 };
 
-// --- جلب عدد الإشعارات غير المقروءة ---
+// --- ط¬ظ„ط¨ ط¹ط¯ط¯ ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ ط؛ظٹط± ط§ظ„ظ…ظ‚ط±ظˆط،ط© ---
 export const getUnreadCount = async () => {
   try {
     const response = await api.get<{
@@ -96,7 +96,7 @@ export const getUnreadCount = async () => {
     if (response.data.success) {
       return response.data.data;
     }
-    throw new Error('فشل جلب عدد الإشعارات');
+    throw new Error('ظپط´ظ„ ط¬ظ„ط¨ ط¹ط¯ط¯ ط§ظ„ط¥ط´ط¹ط§ط±ط§طھ');
   } catch (error) {
     throw error;
   }
