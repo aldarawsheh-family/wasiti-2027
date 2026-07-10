@@ -14,6 +14,12 @@ export class WalletPermissionGuard implements CanActivate {
       return true;
     }
 
+    // PLATFORM_OWNER و ADMIN يملكون كل الصلاحيات تلقائياً
+    const role = request.role || request.user?.role;
+    if (role === 'PLATFORM_OWNER' || role === 'ADMIN') {
+      return true;
+    }
+
     const adminUserId = request.userId;
     const result = await this.pool.query(
       `SELECT 1 FROM wallet.admin_permissions

@@ -16,7 +16,7 @@ export class DealController {
   constructor(private readonly dealService: DealService) {}
 
   @Post()
-  @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
+  @Roles('USER', 'SELLER', 'COMPANY_ADMIN', 'ADMIN', 'PLATFORM_OWNER')
   async create(
     @Headers('tenant-id') tenantId: string,
     @Headers('user-id') userId: string,
@@ -40,7 +40,7 @@ export class DealController {
   }
 
   @Get(':id')
-  @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
+  @Roles('USER', 'SELLER', 'COMPANY_ADMIN', 'ADMIN', 'PLATFORM_OWNER')
   async get(
     @Headers('tenant-id') tenantId: string,
     @Param('id') id: string,
@@ -49,7 +49,7 @@ export class DealController {
   }
 
   @Get()
-  @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
+  @Roles('USER', 'SELLER', 'COMPANY_ADMIN', 'ADMIN', 'PLATFORM_OWNER')
   async listByUser(
     @Headers('tenant-id') tenantId: string,
     @Headers('user-id') userId: string,
@@ -62,17 +62,19 @@ export class DealController {
   }
 
   @Put(':id/transition')
-  @Roles('SELLER', 'ADMIN', 'PLATFORM_OWNER')
+  @Roles('SELLER', 'COMPANY_ADMIN', 'ADMIN', 'PLATFORM_OWNER')
   async transition(
     @Headers('tenant-id') tenantId: string,
     @Param('id') id: string,
-    @Body() body: { toStatus: string; userId: string; note?: string },
+    @Body() body: { toStatus: string; note?: string },
+    @Req() req: any,
   ) {
-    return this.dealService.transition(tenantId, id, body.toStatus, body.userId, body.note);
+    const userId = req.userId || req.user?.userId || req.headers['user-id'];
+    return this.dealService.transition(tenantId, id, body.toStatus, userId, body.note);
   }
 
   @Get(':id/history')
-  @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
+  @Roles('USER', 'SELLER', 'COMPANY_ADMIN', 'ADMIN', 'PLATFORM_OWNER')
   async history(
     @Headers('tenant-id') tenantId: string,
     @Param('id') id: string,
