@@ -12,7 +12,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly redis: RedisService,
   ) {
-    const dbUrl = new URL(process.env.DATABASE_URL || 'postgres://wasity:***@postgres:5432/wasity');
+    const dbUrl = new URL(process.env.DATABASE_URL || 'postgres://wasity:iLIvcp1R4dmO8zUbGF75Pt6kjQDVXYJN@postgres:5432/wasity');
     dbUrl.searchParams.set('options', '-c search_path=auth,public');
     this.db = new Pool({ connectionString: dbUrl.toString() });
   }

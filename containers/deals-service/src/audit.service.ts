@@ -10,7 +10,9 @@ export class AuditService {
   private db: Pool;
 
   constructor() {
-    this.db = new Pool({ connectionString: process.env.DATABASE_URL });
+    const dbUrl = new URL(process.env.DATABASE_URL || 'postgres://wasity:***@postgres:5432/wasity');
+    dbUrl.searchParams.set('options', '-c search_path=deal,public');
+    this.db = new Pool({ connectionString: dbUrl.toString() });
   }
 
   async log(

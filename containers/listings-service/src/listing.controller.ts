@@ -15,15 +15,15 @@ export class ListingController {
 async getAll(@Req() req: any, @Query('limit') limit?: string, @Query('offset') offset?: string) {
     return this.listingService.getAll(req.tenantId, limit ? parseInt(limit) : 50, offset ? parseInt(offset) : 0);
 }
-  @Get(':id')
-  async getById(@Param('id') id: string, @Req() req: any) {
-    return this.listingService.getById(req.tenantId, id);
-  }
+ @Get(':id')
+@UseGuards(TenantGuard)
+async getById(@Param('id') id: string, @Req() req: any) {
+  return this.listingService.getById(req.tenantId, id);
+}
 
   @Post()
   @UseGuards(AuthGuard, TenantGuard, RolesGuard)
-  @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
-  async create(@Body() body: any, @Req() req: any) {
+@Roles('USER', 'SELLER', 'COMPANY_ADMIN', 'ADMIN', 'PLATFORM_OWNER')  async create(@Body() body: any, @Req() req: any) {
     const ownerId = req.userId || req.headers['user-id'];
     const tenantId = req.tenantId;
     this.logger.log('Create listing - userId:', req.userId);

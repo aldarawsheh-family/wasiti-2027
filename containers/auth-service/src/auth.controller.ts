@@ -1,4 +1,4 @@
-﻿import { Controller, Post, Get, Body, Headers, UnauthorizedException } from '@nestjs/common';
+﻿import { Controller, Post, Get, Body, Headers, UnauthorizedException, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller()
@@ -11,8 +11,22 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Headers('tenant-id') tenantId: string, @Body() body: { email: string; password: string }) {
-    return this.authService.login(tenantId, body.email, body.password);
+  async login(
+    @Headers('tenant-id') tenantId: string,
+    @Body() body: { email: string; password: string },
+    @Res({ passthrough: true }) res: any
+  ) {
+    const result = await this.authService.login(tenantId, body.email, body.password);
+    
+    res.cookie('auth_token', result.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    
+    return result;
   }
 
   @Post('refresh')

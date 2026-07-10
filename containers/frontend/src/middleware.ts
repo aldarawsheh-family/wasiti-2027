@@ -7,35 +7,51 @@ const intlMiddleware = createMiddleware({
   defaultLocale: 'ar',
 });
 
-const protectedRoutes = ['/ar/dashboard', '/ar/manage', '/ar/publish', '/ar/admin'];
+const protectedRoutes = ['/ar/dashboard', '/ar/manage', '/ar/publish', '/ar/admin', '/ar/listing/create'];
 
 const roleRoutes: Record<string, string[]> = {
+  '/ar/admin': ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT', 'MODERATOR'],
+  '/ar/admin/users': ['PLATFORM_OWNER', 'ADMIN'],
+  '/ar/admin/wallet': ['PLATFORM_OWNER', 'ADMIN'],
+  '/ar/admin/system': ['PLATFORM_OWNER'],
+  '/ar/admin/revenue': ['PLATFORM_OWNER', 'ADMIN'],
+  '/ar/admin/tenants': ['PLATFORM_OWNER'],
+  '/ar/admin/subscriptions': ['PLATFORM_OWNER', 'ADMIN'],
+  '/ar/admin/audit-log': ['PLATFORM_OWNER', 'ADMIN'],
   '/ar/dashboard/seller': ['SELLER', 'COMPANY_ADMIN', 'ADMIN', 'PLATFORM_OWNER'],
   '/ar/dashboard/company': ['COMPANY_ADMIN', 'ADMIN', 'PLATFORM_OWNER'],
-  '/ar/admin': ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT', 'MODERATOR'],
+  '/ar/listing/create': ['SELLER', 'COMPANY_ADMIN', 'ADMIN', 'PLATFORM_OWNER'],
+  '/ar/dashboard/wallet': ['USER', 'SELLER', 'COMPANY_ADMIN', 'ADMIN', 'PLATFORM_OWNER'],
 };
 
-const adminRoles = ['PLATFORM_OWNER', 'ADMIN', 'SUPPORT', 'MODERATOR'];
+const adminRoles = ['PLATFORM_OWNER', 'ADMIN'];
 
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
   if (isProtected) {
-    const token = request.cookies.get('auth_token')?.value || '';
+    console.log('RAW COOKIE HEADER:', request.headers.get('cookie'));
+    
+    const urlToken = request.nextUrl.searchParams.get('token') || '';
+    const allCookies = request.cookies.getAll();
+    console.log('ALL COOKIES:', allCookies.map(c => c.name));
+    const token = request.cookies.get('auth_token')?.value || urlToken;
+    
+    console.log('MIDDLEWARE:', { pathname, token: token?.substring(0, 20) || 'none' });
+    
     if (!token) {
       return NextResponse.redirect(new URL('/ar/auth/login', request.url));
     }
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
+      console.log('MIDDLEWARE ROLE:', payload.role);
 
-      // PLATFORM_OWNER + ADMIN يتوجهون لـ /admin بعد تسجيل الدخول
       if (pathname === '/ar/dashboard' && adminRoles.includes(payload.role)) {
         return NextResponse.redirect(new URL('/ar/admin', request.url));
       }
 
-      // USER عادي يحاول دخول /admin
       if (pathname.startsWith('/ar/admin') && !adminRoles.includes(payload.role)) {
         return NextResponse.redirect(new URL('/ar/dashboard', request.url));
       }
@@ -47,7 +63,8 @@ export default function middleware(request: NextRequest) {
           }
         }
       }
-    } catch {
+    } catch (err) {
+      console.log('MIDDLEWARE ERROR:', err);
       return NextResponse.redirect(new URL('/ar/auth/login', request.url));
     }
   }

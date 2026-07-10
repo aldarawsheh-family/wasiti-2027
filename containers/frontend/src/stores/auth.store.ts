@@ -36,7 +36,6 @@ export const useAuthStore = create<AuthState>()(
         set({ loading: true });
         try {
           const data = await loginApi(email, password);
-          document.cookie = `auth_token=${data.accessToken}; path=/; max-age=604800; SameSite=Lax`;
           set({
             user: {
               ...data.user,
@@ -65,14 +64,12 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         await logoutApi();
-        document.cookie = 'auth_token=; path=/; max-age=0';
         set({ user: null, accessToken: null });
       },
 
       refresh: async () => {
         const data = await refreshToken();
         if (data) {
-          document.cookie = `auth_token=${data.token}; path=/; max-age=604800; SameSite=Lax`;
           set({ accessToken: data.token });
         }
       },

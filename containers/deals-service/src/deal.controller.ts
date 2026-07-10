@@ -2,7 +2,7 @@
 // WASITI 2027 — Deals Service — Controller
 // ══════════════════════════════════════════════════
 
-import { Controller, Get, Post, Put, Body, Param, Headers, UseGuards, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, Headers, Req, UseGuards, SetMetadata, NotFoundException } from '@nestjs/common';
 import { DealService } from './deal.service';
 import { AuthGuard } from './common/guards/auth.guard';
 import { TenantGuard } from './common/guards/tenant.guard';
@@ -19,9 +19,24 @@ export class DealController {
   @Roles('USER', 'SELLER', 'ADMIN', 'PLATFORM_OWNER')
   async create(
     @Headers('tenant-id') tenantId: string,
-    @Body() body: { listingId: string; buyerId: string; sellerId: string; offerPrice?: number; message?: string },
+    @Headers('user-id') userId: string,
+    @Body() body: { listingId: string; offerPrice?: number; message?: string },
+    @Req() req: any,
   ) {
-    return this.dealService.create(tenantId, body);
+    const buyerId = userId || req.userId || req.user?.userId;
+
+    const listing = await this.dealService.getListing(tenantId, body.listingId);
+    if (!listing) throw new NotFoundException('Listing not found');
+
+    const sellerId = listing.owner_id;
+
+    return this.dealService.create(tenantId, {
+      listingId: body.listingId,
+      buyerId,
+      sellerId,
+      offerPrice: body.offerPrice,
+      message: body.message,
+    });
   }
 
   @Get(':id')

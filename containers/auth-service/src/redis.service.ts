@@ -10,8 +10,11 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   private client: Redis;
 
   async onModuleInit() {
-    this.client = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
-      maxRetriesPerRequest: 3,
+    this.client = new Redis({
+      host: 'redis',
+      port: 6379,
+      maxRetriesPerRequest: 1,
+      lazyConnect: false,
       retryStrategy(times) {
         if (times > 3) return null;
         return Math.min(times * 200, 2000);

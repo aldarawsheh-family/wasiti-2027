@@ -19,7 +19,13 @@ export class DealService {
     dbUrl.searchParams.set('options', '-c search_path=deal,public');
     this.db = new Pool({ connectionString: dbUrl.toString() });
   }
-
+  async getListing(tenantId: string, listingId: string) {
+    const result = await this.db.query(
+      `SELECT * FROM listing.listings WHERE tenant_id = $1 AND id = $2`,
+      [tenantId, listingId],
+    );
+    return result.rows[0] || null;
+  }
   async create(tenantId: string, data: any) {
     const result = await this.db.query(
       `INSERT INTO deals (tenant_id, listing_id, buyer_id, seller_id, offer_price, message, status)
