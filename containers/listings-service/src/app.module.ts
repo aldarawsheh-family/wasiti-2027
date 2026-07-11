@@ -3,6 +3,7 @@
 // ══════════════════════════════════════════════════
 
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { EventBus } from './event-bus';
 import { EventStore } from './event-store';
 import { JwtModule } from '@nestjs/jwt';
@@ -17,6 +18,7 @@ import { AuthGuard } from './common/guards/auth.guard';
 import { TenantGuard } from './common/guards/tenant.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { AuditService } from './audit.service';
+import { AuditLogInterceptor } from './common/interceptors/audit-log.interceptor';
 
 @Module({
   imports: [
@@ -39,6 +41,10 @@ import { AuditService } from './audit.service';
     EventBus,
     EventStore,
     AuditService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditLogInterceptor,
+    },
   ],
   exports: [AuthGuard],
 })
