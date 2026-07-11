@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-11T13:47:19.162Z",
+  "timestamp": "2026-07-11T15:39:46.111Z",
   "summary": {
     "endpointsTested": 8,
     "iterationsPerEndpoint": 10,
@@ -10,8 +10,8 @@
     ],
     "slowestEndpoint": {
       "name": "Auth Login",
-      "avg": 292,
-      "p95": 313
+      "avg": 296,
+      "p95": 297
     },
     "mostErrors": {
       "name": "Auth Login",
@@ -23,131 +23,131 @@
       "name": "Auth Login",
       "url": "/api/auth/login",
       "method": "POST",
-      "avg": 292,
-      "min": 280,
-      "max": 313,
-      "p95": 313,
+      "avg": 296,
+      "min": 294,
+      "max": 297,
+      "p95": 297,
       "errors": 7,
       "total": 10,
       "times": [
-        280,
-        282,
-        313
-      ]
-    },
-    {
-      "name": "Companies List",
-      "url": "/api/companies",
-      "method": "GET",
-      "avg": 29,
-      "min": 6,
-      "max": 212,
-      "p95": 212,
-      "errors": 0,
-      "total": 10,
-      "times": [
-        6,
-        7,
-        7,
-        7,
-        7,
-        8,
-        8,
-        9,
-        15,
-        212
-      ]
-    },
-    {
-      "name": "Deals List",
-      "url": "/api/deals",
-      "method": "GET",
-      "avg": 19,
-      "min": 4,
-      "max": 136,
-      "p95": 136,
-      "errors": 0,
-      "total": 10,
-      "times": [
-        4,
-        5,
-        5,
-        5,
-        5,
-        5,
-        6,
-        7,
-        14,
-        136
-      ]
-    },
-    {
-      "name": "Notifications",
-      "url": "/api/notifications",
-      "method": "GET",
-      "avg": 15,
-      "min": 6,
-      "max": 79,
-      "p95": 79,
-      "errors": 0,
-      "total": 10,
-      "times": [
-        6,
-        7,
-        8,
-        8,
-        8,
-        8,
-        8,
-        9,
-        12,
-        79
-      ]
-    },
-    {
-      "name": "Wallet Me",
-      "url": "/api/wallet/me",
-      "method": "GET",
-      "avg": 11,
-      "min": 5,
-      "max": 49,
-      "p95": 49,
-      "errors": 0,
-      "total": 10,
-      "times": [
-        5,
-        6,
-        6,
-        6,
-        6,
-        6,
-        6,
-        6,
-        13,
-        49
+        294,
+        297,
+        297
       ]
     },
     {
       "name": "Listings List",
       "url": "/api/listings",
       "method": "GET",
-      "avg": 10,
+      "avg": 33,
       "min": 4,
-      "max": 52,
-      "p95": 52,
+      "max": 272,
+      "p95": 272,
+      "errors": 0,
+      "total": 10,
+      "times": [
+        4,
+        5,
+        5,
+        5,
+        5,
+        6,
+        7,
+        7,
+        10,
+        272
+      ]
+    },
+    {
+      "name": "Companies List",
+      "url": "/api/companies",
+      "method": "GET",
+      "avg": 32,
+      "min": 5,
+      "max": 264,
+      "p95": 264,
+      "errors": 0,
+      "total": 10,
+      "times": [
+        5,
+        6,
+        6,
+        6,
+        6,
+        7,
+        7,
+        8,
+        8,
+        264
+      ]
+    },
+    {
+      "name": "Deals List",
+      "url": "/api/deals",
+      "method": "GET",
+      "avg": 17,
+      "min": 4,
+      "max": 115,
+      "p95": 115,
+      "errors": 0,
+      "total": 10,
+      "times": [
+        4,
+        5,
+        5,
+        6,
+        6,
+        6,
+        7,
+        7,
+        7,
+        115
+      ]
+    },
+    {
+      "name": "Wallet Me",
+      "url": "/api/wallet/me",
+      "method": "GET",
+      "avg": 16,
+      "min": 5,
+      "max": 98,
+      "p95": 98,
+      "errors": 0,
+      "total": 10,
+      "times": [
+        5,
+        6,
+        6,
+        6,
+        7,
+        7,
+        7,
+        7,
+        8,
+        98
+      ]
+    },
+    {
+      "name": "Notifications",
+      "url": "/api/notifications",
+      "method": "GET",
+      "avg": 16,
+      "min": 4,
+      "max": 111,
+      "p95": 111,
       "errors": 0,
       "total": 10,
       "times": [
         4,
         4,
-        4,
         5,
         5,
         5,
-        5,
-        5,
+        6,
+        6,
+        6,
         7,
-        52
+        111
       ]
     },
     {
@@ -155,22 +155,22 @@
       "url": "/api/ai/docs",
       "method": "GET",
       "avg": 3,
-      "min": 2,
-      "max": 4,
-      "p95": 4,
+      "min": 1,
+      "max": 11,
+      "p95": 11,
       "errors": 0,
       "total": 10,
       "times": [
+        1,
         2,
         2,
         2,
         2,
+        2,
+        2,
         3,
         3,
-        3,
-        3,
-        3,
-        4
+        11
       ]
     },
     {
@@ -186,7 +186,7 @@
       "times": [
         1,
         1,
-        1,
+        2,
         2,
         2,
         2,
@@ -199,28 +199,28 @@
   ],
   "resourceSnapshots": [
     {
-      "timestamp": "2026-07-11T13:47:10.164Z",
-      "cpu": "4%",
-      "ram": "85%",
+      "timestamp": "2026-07-11T15:39:36.523Z",
+      "cpu": "5%",
+      "ram": "91%",
       "dockerContainers": 18,
       "postgresConnections": "13",
-      "redisMemory": "1.13M"
+      "redisMemory": "1.11M"
     },
     {
-      "timestamp": "2026-07-11T13:47:13.446Z",
-      "cpu": "2%",
-      "ram": "85%",
+      "timestamp": "2026-07-11T15:39:40.523Z",
+      "cpu": "1%",
+      "ram": "91%",
       "dockerContainers": 18,
       "postgresConnections": "13",
-      "redisMemory": "1.13M"
+      "redisMemory": "1.11M"
     },
     {
-      "timestamp": "2026-07-11T13:47:16.112Z",
-      "cpu": "3%",
-      "ram": "85%",
+      "timestamp": "2026-07-11T15:39:43.138Z",
+      "cpu": "%",
+      "ram": "91%",
       "dockerContainers": 18,
       "postgresConnections": "13",
-      "redisMemory": "1.13M"
+      "redisMemory": "1.11M"
     }
   ],
   "loadTestResults": [
@@ -228,9 +228,9 @@
       "users": 10,
       "passed": 10,
       "failed": 0,
-      "avgResponseTime": 4,
+      "avgResponseTime": 5,
       "maxResponseTime": 0,
-      "duration": 43
+      "duration": 49
     },
     {
       "users": 25,
@@ -238,15 +238,15 @@
       "failed": 0,
       "avgResponseTime": 3,
       "maxResponseTime": 0,
-      "duration": 85
+      "duration": 79
     },
     {
       "users": 50,
       "passed": 50,
       "failed": 0,
-      "avgResponseTime": 5,
+      "avgResponseTime": 4,
       "maxResponseTime": 0,
-      "duration": 263
+      "duration": 203
     }
   ],
   "recommendations": [

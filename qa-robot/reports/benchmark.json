@@ -1,0 +1,79 @@
+{
+  "timestamp": "2026-07-11T15:39:46.114Z",
+  "endpoints": [
+    {
+      "name": "Auth Login",
+      "avg": 296,
+      "p95": 297,
+      "errors": 7
+    },
+    {
+      "name": "Listings List",
+      "avg": 33,
+      "p95": 272,
+      "errors": 0
+    },
+    {
+      "name": "Companies List",
+      "avg": 32,
+      "p95": 264,
+      "errors": 0
+    },
+    {
+      "name": "Deals List",
+      "avg": 17,
+      "p95": 115,
+      "errors": 0
+    },
+    {
+      "name": "Wallet Me",
+      "avg": 16,
+      "p95": 98,
+      "errors": 0
+    },
+    {
+      "name": "Notifications",
+      "avg": 16,
+      "p95": 111,
+      "errors": 0
+    },
+    {
+      "name": "AI Docs",
+      "avg": 3,
+      "p95": 11,
+      "errors": 0
+    },
+    {
+      "name": "Health",
+      "avg": 2,
+      "p95": 3,
+      "errors": 0
+    }
+  ],
+  "loadTests": [
+    {
+      "users": 10,
+      "passed": 10,
+      "failed": 0,
+      "avgResponseTime": 5,
+      "maxResponseTime": 0,
+      "duration": 49
+    },
+    {
+      "users": 25,
+      "passed": 25,
+      "failed": 0,
+      "avgResponseTime": 3,
+      "maxResponseTime": 0,
+      "duration": 79
+    },
+    {
+      "users": 50,
+      "passed": 50,
+      "failed": 0,
+      "avgResponseTime": 4,
+      "maxResponseTime": 0,
+      "duration": 203
+    }
+  ]
+}

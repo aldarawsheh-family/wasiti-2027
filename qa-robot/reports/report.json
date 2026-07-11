@@ -1,21 +1,44 @@
 {
-  "generated": "2026-07-11T15:35:11.810Z",
+  "generated": "2026-07-11T15:39:46.121Z",
   "version": "WASITI-2027-RC2",
   "summary": {
-    "total": 14,
-    "passed": 14,
-    "failed": 0,
-    "critical": 0,
-    "major": 0,
+    "total": 12,
+    "passed": 10,
+    "failed": 2,
+    "critical": 1,
+    "major": 1,
     "minor": 0,
-    "duration_seconds": 24
+    "duration_seconds": 12
   },
   "categories": {
     "performance": {
-      "total": 14,
-      "passed": 14,
-      "failed": 0
+      "total": 11,
+      "passed": 10,
+      "failed": 1
+    },
+    "analyzer": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1
     }
   },
-  "failures": []
+  "failures": [
+    {
+      "test": "Perf: Auth Login",
+      "category": "performance",
+      "passed": false,
+      "expected": "< 500ms",
+      "actual": "296ms avg, 297ms p95, 7 errors",
+      "severity": "MAJOR",
+      "duration": 296
+    },
+    {
+      "test": "تحليل: Auth Login",
+      "category": "analyzer",
+      "passed": false,
+      "expected": "يعمل بدون أخطاء",
+      "actual": "bcrypt غير متوافق مع Docker Alpine. استبدل بـ bcryptjs.",
+      "severity": "CRITICAL"
+    }
+  ]
 }

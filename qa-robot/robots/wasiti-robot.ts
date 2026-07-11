@@ -44,6 +44,10 @@ async function main() {
     const perf = new PerformanceEngine(reporter);
     await perf.runAdvancedScenarios();
   }
+    else if (mode === '--dashboard') {
+    const perf = new PerformanceEngine(reporter);
+    await perf.runDashboard();
+  }
   // ── Full Check ──
   else {
     const discovery = new DiscoveryEngine(reporter);

@@ -207,7 +207,87 @@ export class PerformanceEngine {
 
     this.generateInfraReport(containerStats, slowQueries, hitRatio, queueDepth);
   }
+  async runDashboard(): Promise<void> {
+    Logger.header('📊 Performance Dashboard');
 
+    // Run performance tests first
+    await this.runPerformance();
+
+    // Load previous benchmark
+    const reportDir = path.join(__dirname, '..', 'reports');
+    let previousBenchmark: any = null;
+    try {
+      const prev = fs.readFileSync(path.join(reportDir, 'benchmark.json'), 'utf-8');
+      previousBenchmark = JSON.parse(prev);
+    } catch {
+      Logger.info('  ⚠️ لا يوجد benchmark سابق — سيتم إنشاء واحد جديد');
+    }
+
+    // Save current benchmark
+    const currentBenchmark = {
+      timestamp: new Date().toISOString(),
+      endpoints: this.results.map(r => ({ name: r.name, avg: r.avg, p95: r.p95, errors: r.errors })),
+      loadTests: this.loadResults,
+    };
+    fs.writeFileSync(path.join(reportDir, 'benchmark.json'), JSON.stringify(currentBenchmark, null, 2));
+    Logger.info('  📁 benchmark.json محفوظ');
+
+    // Compare with previous
+    const comparisons: any[] = [];
+    if (previousBenchmark) {
+      Logger.info('  📈 مقارنة مع آخر Benchmark...');
+      for (const prev of previousBenchmark.endpoints) {
+        const curr = currentBenchmark.endpoints.find((e: any) => e.name === prev.name);
+        if (curr) {
+          const diff = curr.avg - prev.avg;
+          const pctChange = prev.avg > 0 ? Math.round((diff / prev.avg) * 100) : 0;
+          const status = pctChange > 20 ? '⚠️ SLOWER' : pctChange < -20 ? '✅ FASTER' : '➡️ SAME';
+          comparisons.push({ name: prev.name, prevAvg: prev.avg, currAvg: curr.avg, diff, pctChange, status });
+
+          this.reporter.addResult({
+            test: `Bench: ${prev.name}`, category: 'performance',
+            passed: pctChange <= 20,
+            expected: '< 20% slower',
+            actual: `${prev.avg}ms → ${curr.avg}ms (${pctChange > 0 ? '+' : ''}${pctChange}%) ${status}`,
+            severity: pctChange > 20 ? 'CRITICAL' : 'MAJOR',
+          });
+        }
+      }
+    }
+
+    this.generateDashboardReport(comparisons, currentBenchmark, previousBenchmark);
+  }
+
+  private generateDashboardReport(comparisons: any[], current: any, previous: any): void {
+    const reportDir = path.join(__dirname, '..', 'reports');
+
+    const rows = comparisons.map(c => {
+      const color = c.pctChange > 20 ? 'red' : c.pctChange < -20 ? 'green' : 'white';
+      return `<tr>
+        <td>${c.name}</td>
+        <td>${c.prevAvg}ms</td>
+        <td>${c.currAvg}ms</td>
+        <td style="color:${color}">${c.pctChange > 0 ? '+' : ''}${c.pctChange}%</td>
+        <td>${c.status}</td>
+      </tr>`;
+    }).join('');
+
+    const regression = comparisons.filter(c => c.pctChange > 20);
+    const summary = regression.length === 0
+      ? '✅ لا يوجد تدهور في الأداء'
+      : `⚠️ ${regression.length} Endpoints أبطأ بنسبة > 20%`;
+
+    const html = `<!DOCTYPE html>
+<html dir="rtl"><head><meta charset="UTF-8"><title>WASITI Dashboard</title>
+<style>body{font-family:Cairo;background:#111;color:#eee;padding:20px}h1{color:#128C4F}.pass{color:green}.fail{color:red}table{border-collapse:collapse;width:100%}th,td{border:1px solid #333;padding:10px}th{background:#128C4F}</style></head>
+<body><h1>📊 WASITI 2027 — Performance Dashboard</h1><p>📅 ${current.timestamp}</p>
+<h2>📈 Benchmark Comparison</h2><p>${summary}</p>
+<table><tr><th>Endpoint</th><th>Previous</th><th>Current</th><th>Change</th><th>Status</th></tr>${rows}</table>
+<p style="margin-top:40px;color:#666">RC6-B3 — Performance Dashboard</p></body></html>`;
+
+    fs.writeFileSync(path.join(reportDir, 'dashboard.html'), html);
+    Logger.info('📁 dashboard.html محفوظ');
+  }
   private generateInfraReport(containerStats: any[], slowQueries: string, hitRatio: string, queueDepth: string): void {
     const reportDir = path.join(__dirname, '..', 'reports');
     const report = {

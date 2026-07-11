@@ -8,6 +8,7 @@
     "qa:quick": "npx ts-node robots/wasiti-robot.ts --quick",
     "qa:performance": "npx ts-node robots/wasiti-robot.ts --performance",
    "qa:stress": "npx ts-node robots/wasiti-robot.ts --stress",
+   "qa:dashboard": "npx ts-node robots/wasiti-robot.ts --dashboard",
    "qa:infra": "npx ts-node robots/wasiti-robot.ts --infra",
    "qa:auth": "npx ts-node robots/wasiti-robot.ts --service=auth",
     "qa:wallet": "npx ts-node robots/wasiti-robot.ts --service=wallet",
