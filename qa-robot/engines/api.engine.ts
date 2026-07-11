@@ -115,7 +115,6 @@ export class ApiEngine {
     // Run all endpoints
     for (const ep of ENDPOINTS) {
       if (ep.dynamic && !testIds[ep.saveId || '']) {
-        // Skip if dynamic ID not ready
         continue;
       }
 
@@ -134,7 +133,6 @@ export class ApiEngine {
           res = await axios.post(`${ENV.GATEWAY_URL}${url}`, ep.body || {}, config);
         }
 
-        // Save ID if this is a create endpoint
         if (ep.saveId && res.data) {
           const id = res.data.id || res.data.data?.id || res.data.requestId;
           if (id) {
@@ -166,13 +164,12 @@ export class ApiEngine {
       }
     }
 
-  
+    await this.cleanupTestData();
   }
 
   private async createTestData(): Promise<void> {
     Logger.info('📦 إنشاء بيانات الاختبار...');
     
-    // Create Listing
     try {
       const res = await axios.post(`${ENV.GATEWAY_URL}/api/listings`, {
         title: 'QA Dynamic Test', price: 99, city: 'دمشق', category: 'Cars',
@@ -186,7 +183,6 @@ export class ApiEngine {
       Logger.warn('⚠️ فشل إنشاء Listing تجريبي');
     }
 
-    // Create Deal
     if (testIds.listingId) {
       try {
         const res = await axios.post(`${ENV.GATEWAY_URL}/api/deals`, {
@@ -202,24 +198,24 @@ export class ApiEngine {
       }
     }
   }
+
   private async cleanupTestData(): Promise<void> {
     Logger.info('🧹 تنظيف بيانات الاختبار...');
     
-    if (testIds.dealId) {
+    if (testIds?.dealId) {
       try {
         await axios.delete(`${ENV.GATEWAY_URL}/api/deals/${testIds.dealId}`, { headers: this.headers(), timeout: 5000 });
         Logger.pass('✅ Deal deleted');
       } catch { /* ignore */ }
     }
 
-    if (testIds.listingId) {
+    if (testIds?.listingId) {
       try {
         await axios.delete(`${ENV.GATEWAY_URL}/api/listings/${testIds.listingId}`, { headers: this.headers(), timeout: 5000 });
         Logger.pass('✅ Listing deleted');
       } catch { /* ignore */ }
     }
   }
-
 
   async checkApiQuick(): Promise<void> {
     Logger.header('🔌 فحص سريع (Health)');
