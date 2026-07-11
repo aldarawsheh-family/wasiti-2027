@@ -1,5 +1,5 @@
 {
-  "generated": "2026-07-11T11:16:48.448Z",
+  "generated": "2026-07-11T11:40:56.595Z",
   "version": "WASITI-2027-RC2",
   "summary": {
     "total": 21,
@@ -8,7 +8,7 @@
     "critical": 0,
     "major": 0,
     "minor": 0,
-    "duration_seconds": 5
+    "duration_seconds": 1
   },
   "categories": {
     "docker": {
