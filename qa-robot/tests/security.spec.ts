@@ -20,14 +20,14 @@ test.describe('Security Tests', () => {
 
   // 2. RBAC Tests
   test('مستخدم عادي → Admin → 403', async ({ page }) => {
-    await page.goto(`${BASE}/ar/auth/login`, {waitUntil: 'load'  });
+    await page.goto(`${BASE}/ar/auth/login`, { waitUntil: 'load' });
     await page.waitForTimeout(1000);
     await page.locator('input[type="email"]').fill('buyer@wasity.ly');
     await page.locator('input[type="password"]').fill('Wasity@2026');
     await page.getByRole('button', { name: 'دخول' }).click();
     await page.waitForTimeout(3000);
     
-    const response = await page.goto(`${BASE}/ar/admin`, { waitUntil: 'networkidle' });
+    const response = await page.goto(`${BASE}/ar/admin`, { waitUntil: 'load' });
     expect([403, 302]).toContain(response?.status());
   });
 
@@ -66,6 +66,7 @@ test.describe('Security Tests', () => {
   // 7. CORS
   test('CORS headers موجودة', async ({ request }) => {
     const res = await request.get(`${API}/health`);
-    expect(res.headers()['access-control-allow-origin']).toBeTruthy();
+    const cors = res.headers()['access-control-allow-origin'] || res.headers()['Access-Control-Allow-Origin'];
+    expect(cors).toBeTruthy();
   });
 });
