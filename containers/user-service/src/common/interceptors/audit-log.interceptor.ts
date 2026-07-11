@@ -43,6 +43,7 @@ export class AuditLogInterceptor implements NestInterceptor {
 
     const actorId = request.userId || request.headers['user-id'] || 'system';
     const targetId = request.params?.id || null;
+    const entityType = context.getClass().name.replace('Controller', '').toLowerCase();
     const ipAddress = request.ip || 'api';
 
     return next.handle().pipe(
@@ -51,7 +52,7 @@ export class AuditLogInterceptor implements NestInterceptor {
           await this.db.query(
             `INSERT INTO audit_logs (user_id, action, entity_type, entity_id, new_data, ip_address, tenant_id)
              VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-            [actorId, actionType, 'unknown', targetId, JSON.stringify(data), ipAddress,
+            [actorId, actionType, entityType, targetId, JSON.stringify(data), ipAddress,
              request.tenantId || '00000000-0000-0000-0000-000000000001'],
           );
         } catch (err) {
