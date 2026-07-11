@@ -166,8 +166,7 @@ export class ApiEngine {
       }
     }
 
-    // Cleanup
-    await this.cleanupTestData();
+  
   }
 
   private async createTestData(): Promise<void> {
@@ -203,11 +202,9 @@ export class ApiEngine {
       }
     }
   }
-
   private async cleanupTestData(): Promise<void> {
     Logger.info('🧹 تنظيف بيانات الاختبار...');
     
-    // Delete Deal
     if (testIds.dealId) {
       try {
         await axios.delete(`${ENV.GATEWAY_URL}/api/deals/${testIds.dealId}`, { headers: this.headers(), timeout: 5000 });
@@ -215,7 +212,6 @@ export class ApiEngine {
       } catch { /* ignore */ }
     }
 
-    // Delete Listing
     if (testIds.listingId) {
       try {
         await axios.delete(`${ENV.GATEWAY_URL}/api/listings/${testIds.listingId}`, { headers: this.headers(), timeout: 5000 });
@@ -223,6 +219,7 @@ export class ApiEngine {
       } catch { /* ignore */ }
     }
   }
+
 
   async checkApiQuick(): Promise<void> {
     Logger.header('🔌 فحص سريع (Health)');
