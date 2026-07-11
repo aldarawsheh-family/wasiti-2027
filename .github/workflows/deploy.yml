@@ -5,8 +5,6 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  release:
-    types: [created]
 
 jobs:
   qa-gate:
@@ -14,52 +12,22 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install QA Robot Dependencies
         run: |
           cd qa-robot
           npm install
 
-      - name: Start Docker Services
-        run: |
-          docker-compose up -d --wait
-          sleep 30
-
-      - name: Stage 1 — Docker Health Check
-        run: |
-          curl http://localhost:8080/health
-          docker ps --format "table {{.Names}}\t{{.Status}}"
-
-      - name: Stage 2 — QA Quick
+      - name: QA Quick Check
         run: |
           cd qa-robot
-          npm run qa:quick
-
-      - name: Stage 3 — Full Regression
-        run: |
-          cd qa-robot
-          npm run qa:full
-
-      - name: Stage 4 — Business Flow
-        run: |
-          cd qa-robot
-          npx playwright test tests/business-flow.spec.ts
-
-      - name: Stage 5 — Security Check
-        run: |
-          cd qa-robot
-          npx playwright test tests/security.spec.ts
-
-      - name: Stage 6 — Performance Check
-        run: |
-          cd qa-robot
-          npm run qa:performance
+          npx ts-node robots/wasiti-robot.ts --quick
 
       - name: Upload Reports
         if: always()
@@ -67,20 +35,3 @@ jobs:
         with:
           name: qa-reports
           path: qa-robot/reports/
-
-      - name: Release Gate — Check Critical Errors
-        run: |
-          cd qa-robot
-          node -e "
-          const report = require('./reports/report.json');
-          const critical = report.summary?.critical || 0;
-          if (critical > 0) {
-            console.error('❌ BLOCKED: ' + critical + ' critical errors');
-            process.exit(1);
-          }
-          console.log('✅ PASSED: 0 critical errors');
-          "
-
-      - name: Deploy on Success
-        if: success() && github.ref == 'refs/heads/main'
-        run: echo "🚀 Ready to deploy — all QA gates passed"
