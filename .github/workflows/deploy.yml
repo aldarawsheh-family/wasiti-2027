@@ -1,46 +1,86 @@
-﻿name: Deploy WASITI
+﻿name: QA Robot — WASITI 2027
 
 on:
   push:
-    branches: [main, master]
+    branches: [main]
+  pull_request:
+    branches: [main]
+  release:
+    types: [created]
 
 jobs:
-  test:
+  qa-gate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          
-      - name: Install Frontend Dependencies
+
+      - name: Install QA Robot Dependencies
         run: |
-          cd containers/frontend
+          cd qa-robot
           npm install
-          
-      - name: Run Frontend Tests
+
+      - name: Start Docker Services
         run: |
-          cd containers/frontend
-          npm test || echo "Tests not configured yet"
+          docker-compose up -d --wait
+          sleep 30
 
-  build:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Build Docker Images
-        run: docker-compose build
-        
-      - name: List Images
-        run: docker images
+      - name: Stage 1 — Docker Health Check
+        run: |
+          curl http://localhost:8080/health
+          docker ps --format "table {{.Names}}\t{{.Status}}"
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Deploy to Server
-        run: echo "Deploy step - configure your server SSH here"
+      - name: Stage 2 — QA Quick
+        run: |
+          cd qa-robot
+          npm run qa:quick
+
+      - name: Stage 3 — Full Regression
+        run: |
+          cd qa-robot
+          npm run qa:full
+
+      - name: Stage 4 — Business Flow
+        run: |
+          cd qa-robot
+          npx playwright test tests/business-flow.spec.ts
+
+      - name: Stage 5 — Security Check
+        run: |
+          cd qa-robot
+          npx playwright test tests/security.spec.ts
+
+      - name: Stage 6 — Performance Check
+        run: |
+          cd qa-robot
+          npm run qa:performance
+
+      - name: Upload Reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: qa-reports
+          path: qa-robot/reports/
+
+      - name: Release Gate — Check Critical Errors
+        run: |
+          cd qa-robot
+          node -e "
+          const report = require('./reports/report.json');
+          const critical = report.summary?.critical || 0;
+          if (critical > 0) {
+            console.error('❌ BLOCKED: ' + critical + ' critical errors');
+            process.exit(1);
+          }
+          console.log('✅ PASSED: 0 critical errors');
+          "
+
+      - name: Deploy on Success
+        if: success() && github.ref == 'refs/heads/main'
+        run: echo "🚀 Ready to deploy — all QA gates passed"
