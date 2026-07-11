@@ -7,7 +7,7 @@ test.describe('Frontend Pages Full Check', () => {
   
   for (const page of PAGES) {
     test(`${page.title} — ${page.path}`, async ({ page: pageObj }) => {
-      const response = await pageObj.goto(`${BASE}${page.path}`, { waitUntil: 'load' });
+      const response = await pageObj.goto(`${BASE}${page.path}`, { waitUntil: 'load', timeout: 15000 });
       
       // 1. Status check
       expect([200, 302]).toContain(response?.status());
