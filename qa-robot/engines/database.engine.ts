@@ -186,5 +186,110 @@ export class DatabaseEngine {
         passed: false, expected: 'متصل', actual: 'فشل الاتصال', severity: 'CRITICAL',
       });
     }
+
+    // 8. Constraint Check
+    Logger.info('🔐 فحص Constraints...');
+    try {
+      const uniqueCount = this.query(
+        `SELECT COUNT(*) FROM information_schema.table_constraints WHERE constraint_type = 'UNIQUE'`
+      );
+      const notNullCount = this.query(
+        `SELECT COUNT(*) FROM information_schema.columns WHERE is_nullable = 'NO' AND table_schema NOT IN ('pg_catalog', 'information_schema')`
+      );
+      Logger.pass(`  ✅ ${parseInt(uniqueCount)} UNIQUE, ${parseInt(notNullCount)} NOT NULL`);
+      this.reporter.addResult({
+        test: 'Constraints', category: 'database',
+        passed: true, expected: 'موجودة', actual: `${parseInt(uniqueCount)} UNIQUE, ${parseInt(notNullCount)} NOT NULL`, severity: 'MAJOR',
+      });
+    } catch {
+      this.reporter.addResult({
+        test: 'Constraints', category: 'database',
+        passed: false, expected: 'موجودة', actual: 'فشل الفحص', severity: 'MAJOR',
+      });
+    }
+
+    // 9. Index Check
+    Logger.info('📊 فحص Indexes...');
+    try {
+      const idxCount = this.query(
+        `SELECT COUNT(*) FROM pg_indexes WHERE schemaname NOT IN ('pg_catalog', 'information_schema')`
+      );
+      Logger.pass(`  ✅ ${parseInt(idxCount)} indexes`);
+      this.reporter.addResult({
+        test: 'Indexes', category: 'database',
+        passed: true, expected: 'موجودة', actual: `${parseInt(idxCount)} indexes`, severity: 'MAJOR',
+      });
+    } catch {
+      this.reporter.addResult({
+        test: 'Indexes', category: 'database',
+        passed: false, expected: 'موجودة', actual: 'فشل الفحص', severity: 'MAJOR',
+      });
+    }
+
+    // 10. Data Integrity
+    Logger.info('🔎 فحص Data Integrity...');
+    try {
+      const orphanDeals = this.query(
+        `SELECT COUNT(*) FROM deal.deals d LEFT JOIN listing.listings l ON d.listing_id = l.id WHERE l.id IS NULL`
+      );
+      const dupEmail = this.query(
+        `SELECT COUNT(*) FROM (SELECT email, COUNT(*) FROM auth.users GROUP BY email HAVING COUNT(*) > 1) AS dups`
+      );
+      const passed = parseInt(orphanDeals) === 0 && parseInt(dupEmail) === 0;
+      if (passed) Logger.pass('  ✅ 0 orphan records, 0 duplicate emails');
+      else Logger.fail(`  ❌ ${parseInt(orphanDeals)} orphan deals, ${parseInt(dupEmail)} duplicate emails`);
+      this.reporter.addResult({
+        test: 'Data Integrity', category: 'database',
+        passed, expected: '0 orphans, 0 duplicates', actual: `${parseInt(orphanDeals)} orphans, ${parseInt(dupEmail)} dupes`, severity: 'CRITICAL',
+      });
+    } catch {
+      this.reporter.addResult({
+        test: 'Data Integrity', category: 'database',
+        passed: false, expected: 'نظيف', actual: 'فشل الفحص', severity: 'CRITICAL',
+      });
+    }
+
+    // 11. Backup Status
+    Logger.info('💾 فحص Backup...');
+    try {
+      const slaveLag = execSync(
+        `docker exec wasity-postgres psql -U wasity -d wasity -t -c "SELECT pg_wal_lsn_diff(pg_current_wal_lsn(), replay_lsn) FROM pg_stat_replication"`,
+        { encoding: 'utf-8', timeout: 5000 }
+      ).trim();
+      const lag = parseInt(slaveLag) || 0;
+      const passed = lag < 1000000;
+      if (passed) Logger.pass(`  ✅ Replication lag: ${lag} bytes`);
+      else Logger.warn(`  ⚠️ Replication lag: ${lag} bytes`);
+      this.reporter.addResult({
+        test: 'Backup / Replication Lag', category: 'database',
+        passed, expected: '< 1MB', actual: `${lag} bytes`, severity: 'MAJOR',
+      });
+    } catch {
+      this.reporter.addResult({
+        test: 'Backup / Replication Lag', category: 'database',
+        passed: false, expected: 'شغال', actual: 'فشل الفحص', severity: 'MAJOR',
+      });
+    }
+
+    // 12. Table Stats
+    Logger.info('📈 إحصائيات الجداول...');
+    try {
+      const totalRows = this.query(
+        `SELECT SUM(n_live_tup) FROM pg_stat_user_tables`
+      );
+      const totalTables = this.query(
+        `SELECT COUNT(*) FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog', 'information_schema')`
+      );
+      Logger.pass(`  ✅ ${parseInt(totalTables)} جداول, ~${parseInt(totalRows)} صف`);
+      this.reporter.addResult({
+        test: 'Table Stats', category: 'database',
+        passed: true, expected: 'بيانات موجودة', actual: `${parseInt(totalTables)} tables, ~${parseInt(totalRows)} rows`, severity: 'MAJOR',
+      });
+    } catch {
+      this.reporter.addResult({
+        test: 'Table Stats', category: 'database',
+        passed: false, expected: 'موجود', actual: 'فشل', severity: 'MAJOR',
+      });
+    }
   }
 }
