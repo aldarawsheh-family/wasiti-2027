@@ -1,5 +1,6 @@
 import { SmartAnalyzer } from '../engines/smart-analyzer.engine';
 import { DiscoveryEngine } from '../engines/discovery.engine';
+import { PerformanceEngine } from '../engines/performance.engine';
 import { Reporter } from '../core/reporter';
 import { Logger } from '../core/logger';
 import { ENV } from '../config/environment';
@@ -28,6 +29,12 @@ async function main() {
 
     const api = new ApiEngine(reporter);
     await api.checkApiQuick();
+  }
+
+  // ── Performance Mode ──
+  else if (mode === '--performance') {
+    const perf = new PerformanceEngine(reporter);
+    await perf.runPerformance();
   }
 
   // ── Full Check ──

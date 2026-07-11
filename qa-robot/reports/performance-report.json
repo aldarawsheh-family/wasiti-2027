@@ -1,0 +1,255 @@
+{
+  "timestamp": "2026-07-11T13:47:19.162Z",
+  "summary": {
+    "endpointsTested": 8,
+    "iterationsPerEndpoint": 10,
+    "loadLevels": [
+      10,
+      25,
+      50
+    ],
+    "slowestEndpoint": {
+      "name": "Auth Login",
+      "avg": 292,
+      "p95": 313
+    },
+    "mostErrors": {
+      "name": "Auth Login",
+      "errors": 7
+    }
+  },
+  "endpointResults": [
+    {
+      "name": "Auth Login",
+      "url": "/api/auth/login",
+      "method": "POST",
+      "avg": 292,
+      "min": 280,
+      "max": 313,
+      "p95": 313,
+      "errors": 7,
+      "total": 10,
+      "times": [
+        280,
+        282,
+        313
+      ]
+    },
+    {
+      "name": "Companies List",
+      "url": "/api/companies",
+      "method": "GET",
+      "avg": 29,
+      "min": 6,
+      "max": 212,
+      "p95": 212,
+      "errors": 0,
+      "total": 10,
+      "times": [
+        6,
+        7,
+        7,
+        7,
+        7,
+        8,
+        8,
+        9,
+        15,
+        212
+      ]
+    },
+    {
+      "name": "Deals List",
+      "url": "/api/deals",
+      "method": "GET",
+      "avg": 19,
+      "min": 4,
+      "max": 136,
+      "p95": 136,
+      "errors": 0,
+      "total": 10,
+      "times": [
+        4,
+        5,
+        5,
+        5,
+        5,
+        5,
+        6,
+        7,
+        14,
+        136
+      ]
+    },
+    {
+      "name": "Notifications",
+      "url": "/api/notifications",
+      "method": "GET",
+      "avg": 15,
+      "min": 6,
+      "max": 79,
+      "p95": 79,
+      "errors": 0,
+      "total": 10,
+      "times": [
+        6,
+        7,
+        8,
+        8,
+        8,
+        8,
+        8,
+        9,
+        12,
+        79
+      ]
+    },
+    {
+      "name": "Wallet Me",
+      "url": "/api/wallet/me",
+      "method": "GET",
+      "avg": 11,
+      "min": 5,
+      "max": 49,
+      "p95": 49,
+      "errors": 0,
+      "total": 10,
+      "times": [
+        5,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        13,
+        49
+      ]
+    },
+    {
+      "name": "Listings List",
+      "url": "/api/listings",
+      "method": "GET",
+      "avg": 10,
+      "min": 4,
+      "max": 52,
+      "p95": 52,
+      "errors": 0,
+      "total": 10,
+      "times": [
+        4,
+        4,
+        4,
+        5,
+        5,
+        5,
+        5,
+        5,
+        7,
+        52
+      ]
+    },
+    {
+      "name": "AI Docs",
+      "url": "/api/ai/docs",
+      "method": "GET",
+      "avg": 3,
+      "min": 2,
+      "max": 4,
+      "p95": 4,
+      "errors": 0,
+      "total": 10,
+      "times": [
+        2,
+        2,
+        2,
+        2,
+        3,
+        3,
+        3,
+        3,
+        3,
+        4
+      ]
+    },
+    {
+      "name": "Health",
+      "url": "/health",
+      "method": "GET",
+      "avg": 2,
+      "min": 1,
+      "max": 3,
+      "p95": 3,
+      "errors": 0,
+      "total": 10,
+      "times": [
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        3
+      ]
+    }
+  ],
+  "resourceSnapshots": [
+    {
+      "timestamp": "2026-07-11T13:47:10.164Z",
+      "cpu": "4%",
+      "ram": "85%",
+      "dockerContainers": 18,
+      "postgresConnections": "13",
+      "redisMemory": "1.13M"
+    },
+    {
+      "timestamp": "2026-07-11T13:47:13.446Z",
+      "cpu": "2%",
+      "ram": "85%",
+      "dockerContainers": 18,
+      "postgresConnections": "13",
+      "redisMemory": "1.13M"
+    },
+    {
+      "timestamp": "2026-07-11T13:47:16.112Z",
+      "cpu": "3%",
+      "ram": "85%",
+      "dockerContainers": 18,
+      "postgresConnections": "13",
+      "redisMemory": "1.13M"
+    }
+  ],
+  "loadTestResults": [
+    {
+      "users": 10,
+      "passed": 10,
+      "failed": 0,
+      "avgResponseTime": 4,
+      "maxResponseTime": 0,
+      "duration": 43
+    },
+    {
+      "users": 25,
+      "passed": 25,
+      "failed": 0,
+      "avgResponseTime": 3,
+      "maxResponseTime": 0,
+      "duration": 85
+    },
+    {
+      "users": 50,
+      "passed": 50,
+      "failed": 0,
+      "avgResponseTime": 5,
+      "maxResponseTime": 0,
+      "duration": 263
+    }
+  ],
+  "recommendations": [
+    "⚠️ Auth Login عنده 7 أخطاء. فحص الاستقرار."
+  ]
+}

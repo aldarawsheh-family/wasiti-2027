@@ -6,6 +6,7 @@
   "scripts": {
     "qa": "npx ts-node robots/wasiti-robot.ts && npx playwright test",
     "qa:quick": "npx ts-node robots/wasiti-robot.ts --quick",
+    "qa:performance": "npx ts-node robots/wasiti-robot.ts --performance",
     "qa:auth": "npx ts-node robots/wasiti-robot.ts --service=auth",
     "qa:wallet": "npx ts-node robots/wasiti-robot.ts --service=wallet",
     "qa:listings": "npx ts-node robots/wasiti-robot.ts --service=listings",
