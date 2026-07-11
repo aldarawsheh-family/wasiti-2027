@@ -36,7 +36,14 @@ async function main() {
     const perf = new PerformanceEngine(reporter);
     await perf.runPerformance();
   }
-
+    else if (mode === '--infra') {
+    const perf = new PerformanceEngine(reporter);
+    await perf.runInfrastructureMonitoring();
+  }
+  else if (mode === '--stress') {
+    const perf = new PerformanceEngine(reporter);
+    await perf.runAdvancedScenarios();
+  }
   // ── Full Check ──
   else {
     const discovery = new DiscoveryEngine(reporter);

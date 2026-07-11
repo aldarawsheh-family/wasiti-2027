@@ -1,0 +1,77 @@
+{
+  "timestamp": "2026-07-11T14:15:05.704Z",
+  "scenarios": [
+    {
+      "name": "Browse Listings",
+      "userCount": 25,
+      "duration": 137,
+      "metrics": {
+        "avg": 97,
+        "median": 104,
+        "min": 61,
+        "max": 131,
+        "p95": 131,
+        "p99": 131,
+        "reqPerSec": 357,
+        "successRate": 100,
+        "errorRate": 0,
+        "totalRequests": 25,
+        "errors": 0
+      }
+    },
+    {
+      "name": "Search + View Listing",
+      "userCount": 50,
+      "duration": 130,
+      "metrics": {
+        "avg": 75,
+        "median": 73,
+        "min": 41,
+        "max": 115,
+        "p95": 112,
+        "p99": 115,
+        "reqPerSec": 676,
+        "successRate": 100,
+        "errorRate": 0,
+        "totalRequests": 50,
+        "errors": 0
+      }
+    },
+    {
+      "name": "Seller CRUD",
+      "userCount": 25,
+      "duration": 339,
+      "metrics": {
+        "avg": 262,
+        "median": 272,
+        "min": 173,
+        "max": 334,
+        "p95": 332,
+        "p99": 334,
+        "reqPerSec": 155,
+        "successRate": 100,
+        "errorRate": 0,
+        "totalRequests": 25,
+        "errors": 0
+      }
+    },
+    {
+      "name": "Deal Flow",
+      "userCount": 25,
+      "duration": 471,
+      "metrics": {
+        "avg": 0,
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "p95": 0,
+        "p99": 0,
+        "reqPerSec": 0,
+        "successRate": 0,
+        "errorRate": 100,
+        "totalRequests": 25,
+        "errors": 25
+      }
+    }
+  ]
+}
