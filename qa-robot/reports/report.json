@@ -1,0 +1,26 @@
+{
+  "generated": "2026-07-11T08:06:23.073Z",
+  "version": "WASITI-2027-RC2",
+  "summary": {
+    "total": 21,
+    "passed": 21,
+    "failed": 0,
+    "critical": 0,
+    "major": 0,
+    "minor": 0,
+    "duration_seconds": 1
+  },
+  "categories": {
+    "docker": {
+      "total": 18,
+      "passed": 18,
+      "failed": 0
+    },
+    "api": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0
+    }
+  },
+  "failures": []
+}

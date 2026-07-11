@@ -1,0 +1,39 @@
+{
+  "name": "wasiti-qa-robot",
+  "version": "2027.1.0",
+  "description": "🤖 WASITI 2027 QA Automation Robot",
+  "main": "robots/wasiti-robot.ts",
+  "scripts": {
+    "qa": "npx ts-node robots/wasiti-robot.ts && npx playwright test",
+    "qa:quick": "npx ts-node robots/wasiti-robot.ts --quick",
+    "qa:auth": "npx ts-node robots/wasiti-robot.ts --service=auth",
+    "qa:wallet": "npx ts-node robots/wasiti-robot.ts --service=wallet",
+    "qa:listings": "npx ts-node robots/wasiti-robot.ts --service=listings",
+    "qa:rbac": "npx playwright test tests/rbac.spec.ts",
+    "qa:ui": "npx playwright test tests/pages.spec.ts",
+    "qa:security": "npx playwright test tests/security.spec.ts",
+    "qa:full": "npm run qa:quick && npx playwright test",
+    "qa:report": "start reports\\report.html"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.40.0",
+    "amqplib": "^0.10.3",
+    "axios": "^1.6.0",
+    "chalk": "^4.1.2",
+    "dockerode": "^4.0.0",
+    "dotenv": "^16.3.1",
+    "handlebars": "^4.7.8",
+    "ioredis": "^5.3.2",
+    "pg": "^8.11.3",
+    "playwright": "^1.40.0",
+    "socket.io-client": "^4.7.2"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.3",
+    "@types/dockerode": "^3.3.23",
+    "@types/node": "^20.10.0",
+    "@types/pg": "^8.10.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.2"
+  }
+}
